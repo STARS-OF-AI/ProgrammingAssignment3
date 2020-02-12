@@ -34,14 +34,17 @@ def select_var(board, n):
     elif n == 2:
         return 0
         #run MRV to get var
+
+def arc_consistent():
+    # need to implement
+    return True
     
 def backtrack(board):
-    if board_complete():
+    if board_complete(board):
         return board
     var = select_var(board, 1)
     #make a move on selected var
     if arc_consistent():
-        assignment.append(var)
         result = backtrack(board)
         if result:
             return result
@@ -93,3 +96,4 @@ p_vals = calculate_possible_vals(board)
 
 print(p_vals)
 #print(p_vals[1][1], len(p_vals[1][1]))
+#backtrack(board)
