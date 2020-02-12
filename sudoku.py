@@ -18,6 +18,36 @@ board = [
 [0,0,0, 0,0,2, 0,1,9]]
 
 #print(board)
+def board_complete(board):
+    for x in range(9):
+        for y in range(9):
+            if board[x][y] != 0:
+                return False
+    return True
+
+def select_var(board, n):
+    if n == 1:
+        for x in range(9):
+            for y in range(9):
+                if board[x][y] == 0:
+                    return board[x][y]
+    elif n == 2:
+        return 0
+        #run MRV to get var
+    
+def backtrack(board):
+    if board_complete():
+        return board
+    var = select_var(board, 1)
+    #make a move on selected var
+    if arc_consistent():
+        assignment.append(var)
+        result = backtrack(board)
+        if result:
+            return result
+        #mayb eneed to remove vals from assignment
+    return False
+    
 def possibilities(board, x, y):
     possList = []
     if board[x][y] == 0:
