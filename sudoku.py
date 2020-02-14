@@ -123,8 +123,22 @@ def backtrack(board):
             return result
         #mayb eneed to remove vals from assignment
     return False
-
-
+ 
+''' currently pseudocode
+def backtrack(board)
+    # inference rule returns a move as a num, x and y then
+    if(check_location(board,x,y,num)): 
+              
+            # make move 
+            board[x][y]=num 
+  
+            if(backtrack(board): 
+                return True
+  
+            board[x][y] = 0 #undo move
+                 
+    return False 
+'''
 ################ INFERENCE FUNCTIONS ############
 
 
