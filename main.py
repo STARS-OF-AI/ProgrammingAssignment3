@@ -11,7 +11,18 @@ import sudoku as s
 
 
 def main():
-    return
+    # initializing board
+    s.create_board()
+    s.calculate_poss(s.board_objects)
+    print("\nPRINTING FRESH BOARD")
+    # print_board()
+
+    print("\nnaked single FUNCTION")
+    s.naked_singles(s.board_objects)
+    s.print_board()
+
+
+
 
 
 if __name__ == "__main__":

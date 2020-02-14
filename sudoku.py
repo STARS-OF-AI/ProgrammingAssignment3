@@ -8,6 +8,7 @@ February 17, 2020
 """
 
 import cell as c
+from prettytable import PrettyTable
 
 # hardcoding the board for now (board feeder function goes here)
 board = [
@@ -34,7 +35,7 @@ def possibilities(board, x, y):
                 #rowP.remove(board[x][i].value)
                 if board[x][i].value in board[x][y].list :
                     board[x][y].list.remove(board[x][i].value)
-            if board[i][y] != 0:
+            if board[i][y].value != 0:
                 if board[i][y].value in board[x][y].list:
                     board[x][y].list.remove(board[i][y].value)
 
@@ -44,30 +45,47 @@ def possibilities(board, x, y):
         #print('box', boxX, boxY)
         for j in range(boxX, boxX+3):
             for k in range(boxY, boxY+3):
-                if board[j][k] != 0:
+                if board[j][k].value != 0:
                     if board[j][k].value in board[x][y].list :
                         board[x][y].list.remove(board[j][k].value)
 
 
 # append cells into sudoku board
-# put these for loops into a function
-for i in range (9):
-    board_objects_row = []
-    for j in range (9) :
-        board_objects_row.append(c.cell(board[i][j], i , j))
+def create_board():
+    for i in range (9):
+        board_objects_row = []
+        for j in range (9) :
+            board_objects_row.append(c.cell(board[i][j], i, j))
 
-    board_objects.append(board_objects_row)
+        board_objects.append(board_objects_row)
+
 
 # calculate the poss list for each cell
-for i in range (9):
-    for j in range (9) :
-        possibilities(board_objects, i,j )
+def calculate_poss(board_obj):
+    for i in range (9):
+        for j in range (9) :
+            possibilities(board_obj, i,j )
 
-# print the board
-for i in range (9):
-    for j in range (9) :
-        print (board_objects[i][j].list)
-    print("end of row", i+1)
+
+# print the sudoku board using pretty table
+def print_board():
+    p = PrettyTable()
+    table = []
+
+    for i in range(9):
+        row = []
+        for j in range(9):
+            if len(board_objects[i][j].list) == 0:
+                row.append(board_objects[i][j].value)
+            else:
+                row.append(board_objects[i][j].list)
+        table.append(row)
+
+    for i in table:
+        p.add_row(i)
+
+    print(p.get_string(header=True, border=False))
+
 
 
 ################ BACKTRACKING FUNCTIONS ############
@@ -107,20 +125,67 @@ def backtrack(board):
     return False
 
 
-# # function to calculate naked single
-# def naked_singles(board):
-#     for row in range(9):
-#         for i in range(9):
-#             try:
-#                 if isinstance(pvals[row][i], list) and len(pvals[row][i]) == 1:
-#                     board[row][i] = pvals[row][i][0]
-#                 p_vals = calculate_possible_vals(board)
-#             except:
-#                 print("can't DO THAT")
-#                 temp = deepcopy(board)
-#                 temp[row][i] = pvals[row][i][0]
-#                 continue
-# #             try on temp board??
+################ INFERENCE FUNCTIONS ############
+
+
+# function to calculate naked single
+def naked_singles(board_obj):
+    # find by row
+    for x in range(9):
+        for y in range(9):
+            # if list size is 1
+            if len(board_obj[x][y].list) == 1:
+                # assign value to the one in list
+                val = board_obj[x][y].list[0]
+                board_obj[x][y].value = val
+
+                # clear the list
+                board_obj[x][y].list.clear()
+
+                # remove all the singles across row, column, box
+                calculate_poss(board_obj)
+                print("\nrow single value found: ", val)
+
+    # print("\n******PRINTING AFTER ROW BOARD**********")
+    # print_board()
+
+    # find by column
+    for y in range(9):
+        for x in range(9):
+            if len(board_obj[x][y].list) == 1:
+                val = board_obj[x][y].list[0]
+                board_obj[x][y].value = val
+
+                board_obj[x][y].list.clear()
+
+                calculate_poss(board_obj)
+                print("\ncol single value found: ", val)
+                # print_board()
+
+    # print("\n*********PRINTING AFTER COL BOARD********")
+    # print_board()
+
+    # find by box
+    for x in range(9):
+        # calculate box range
+        box_x = x - (x % 3)
+        for y in range(9):
+            box_y = y - (y % 3)
+            # traverse the box
+            for j in range(box_x, box_x+3):
+                for k in range(box_y, box_y+3):
+                    if len(board_obj[x][y].list) == 1:
+                        val = board_obj[x][y].list[0]
+                        board_obj[x][y].value = val
+
+                        board_obj[x][y].list.clear()
+
+                        calculate_poss(board_obj)
+                        print("\nbox single value found: ", val)
+                        # print_board()
+
+    # print("\n*********PRINTING BOX BOARD********")
+    # print_board()
 
 
 
