@@ -218,8 +218,8 @@ def naked_doubles(board_obj):
             for y in range(9):
                 # check if list of element = naked double
                 if double == board_obj[x][y].list:
-                    print("ENTERING THE ROW CELL: {}, {} ".format(x+1, y+1))
-                    print("double: ", double)
+                    # print("ENTERING THE ROW CELL: {}, {} ".format(x+1, y+1))
+                    # print("double: ", double)
                     # then run the possibilities to remove it from
                     # neighboring cells
                     calculate_poss(board_obj)
@@ -236,13 +236,13 @@ def naked_doubles(board_obj):
             for x in range(9):
                 # check if list of element = naked double
                 if double == board_obj[x][y].list:
-                    print("ENTERING THE COL CELL: {}, {} ".format(x+1, y+1))
-                    print("double: ", double)
+                    # print("ENTERING THE COL CELL: {}, {} ".format(x+1, y+1))
+                    # print("double: ", double)
                     # then run the possibilities to remove it from
                     # neighboring cells
                     calculate_poss(board_obj)
 
-    # # find by box
+    # find by box
     # for x in range(9):
     #     # calculate box range
     #     box_x = x - (x % 3)
@@ -256,7 +256,8 @@ def naked_doubles(board_obj):
     #             for k in range(box_y, box_y+3):
     #                 if len(board_obj[j][k].list) == 2:
     #                     double_list.append(board_obj[j][k].list)
-    #                     print("ENTERING THE CELL: {}, {} ".format(x+1, y+1))
+    #                     print("list: ", board_obj[j][k].list)
+    #                     # print("ENTERING THE CELL: {}, {} ".format(x+1, y+1))
     #
     #         # print(double_list)
     #
@@ -282,6 +283,48 @@ def naked_doubles(board_obj):
     #                         calculate_poss(board_obj)
 
 
+# set up naked triple -- PART 1, only checks for
+# full triples
+def naked_triple(board_obj):
+    # find by row
+    for x in range(9):
+        # func to check if size=2 of each item list in the row
+        # return the naked triple
+        triple = get_triple(board_obj[x])
+        if len(triple) == 0:
+            continue
+        else:
+            # print("ROW VALUE: ",x+1)
+            for y in range(9):
+                # check if list of element = naked triple
+                if triple == board_obj[x][y].list:
+                    print("ENTERING THE ROW CELL: {}, {} ".format(x+1, y+1))
+                    print("triple: ", triple)
+                    # then run the possibilities to remove it from
+                    # neighboring cells
+                    calculate_poss(board_obj)
+
+    # find by column
+    for y in range(9):
+        # func to check if size=2 of each item list in the row
+        # return the naked triple
+        triple = get_triple(board_obj[y])
+        if len(triple) == 0:
+            continue
+        else:
+            # print("ROW VALUE: ",x+1)
+            for x in range(9):
+                # check if list of element = naked triple
+                if triple == board_obj[x][y].list:
+                    # print("ENTERING THE COL CELL: {}, {} ".format(x+1, y+1))
+                    # print("triple: ", triple)
+                    # then run the possibilities to remove it from
+                    # neighboring cells
+                    calculate_poss(board_obj)
+
+    # ADD BOX FUNCTIONALITY
+
+
 # function to get naked double row/column
 def get_double(row):
     # catch the lists with 2 element and store
@@ -293,6 +336,21 @@ def get_double(row):
     # get duplicate if exists
     # params: list, double/triple val
     return get_duplicate(double_list, 2)
+
+
+# function to get naked triple row/column
+def get_triple(row):
+    # catch the lists with 2 element and store
+    triple_list = []
+    for i in row:
+        if len(i.list) == 3:
+            triple_list.append(i.list)
+
+    # print(triple_list)
+
+    # get duplicate if exists
+    # params: list, double/triple val
+    return get_duplicate(triple_list, 3)
 
 
 # function to find the duplicate in the
