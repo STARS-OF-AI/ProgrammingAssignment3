@@ -15,13 +15,15 @@ def main():
     s.create_board()
     s.calculate_poss(s.board_objects)
     print("\nPRINTING FRESH BOARD")
-    # print_board()
-
-    print("\nnaked single FUNCTION")
-    s.naked_singles(s.board_objects)
     s.print_board()
 
+    # print("\nnaked single FUNCTION")
+    # s.naked_singles(s.board_objects)
+    # s.print_board()
 
+    print("\nNAKED DOUBLES FUNCTION NOW")
+    s.naked_doubles(s.board_objects)
+    s.print_board()
 
 
 
