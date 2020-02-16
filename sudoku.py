@@ -203,6 +203,7 @@ def naked_singles(board_obj):
     print("\n*********PRINTING BOX BOARD********")
     # print_board()
 
+
 def remove_double(board, double, dubxy):
     x1 = dubxy[0][0]
     y1 = dubxy[0][1]
@@ -294,7 +295,6 @@ def remove_double(board, double, dubxy):
 # function for naked doubles
 def naked_doubles(board_obj):
     # find by row
-
     for x in range(9):
         # func to check if size=2 of each item list in the row
         # return the naked double
@@ -307,8 +307,6 @@ def naked_doubles(board_obj):
             for y in range(9):
                 # check if list of element = naked double
                 if double == board_obj[x][y].list:
-                    # print("ENTERING THE ROW CELL: {}, {} ".format(x+1, y+1))
-                    # print("double: ", double)
                     print("ENTERING THE ROW CELL: {}, {} ".format(x+1, y+1))
                     print("double: ", double)
                     dubxy.append((x,y))
@@ -321,17 +319,27 @@ def naked_doubles(board_obj):
             double = []
 
     #print_board()
+
     # find by column
-    '''for y in range(9):
+    for y in range(9):
         # func to check if size=2 of each item list in the row
         # return the naked double
-        double = get_double(board_obj[y])
+        double_list = []
+        for x in range(9):
+            if len(board_obj[x][y].list) == 2:
+                double_list.append(board_obj[x][y].list)
+
+        double = get_duplicate(double_list, 2)
+        # double = get_double(double_list)
+        print(y)
+        print(double)
         if len(double) == 0:
             continue
         else:
             dubxy = []
             print("ROW VALUE: ",double)
             for x in range(9):
+
                 # check if list of element = naked double
                 if double == board_obj[x][y].list:
                     print("ENTERING THE COL CELL: {}, {} ".format(x+1, y+1))
@@ -342,7 +350,6 @@ def naked_doubles(board_obj):
             print('dub',dubxy)
             remove_double(board_obj, double, dubxy)
             double = []
-      '''
 
     # find by box
     # for x in range(9):
@@ -428,10 +435,13 @@ def naked_doubles(board_obj):
 
 
 # function to get naked double row/column
-def get_double(row):
+def get_double(arr):
+    if len(arr) == 0:
+        return []
+
     # catch the lists with 2 element and store
     double_list = []
-    for i in row:
+    for i in arr:
         if len(i.list) == 2:
             double_list.append(i.list)
 
@@ -509,11 +519,17 @@ def get_duplicate(seq, val):
             # find the duplicate double/triple and return that
             matrix = map(tuple, seq)
             freq_list = Counter(matrix)
+            dup = []
 
             # return the duplicate pair/trio
             for (row, freq) in freq_list.items():
                 if freq == val:
-                    return list(row)
+                    dup = list(row)
+
+            if len(dup) == 1:
+                return dup
+            else:
+                return []
         else:
             return []
     else:
