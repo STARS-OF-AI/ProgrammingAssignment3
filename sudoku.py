@@ -203,10 +203,98 @@ def naked_singles(board_obj):
     print("\n*********PRINTING BOX BOARD********")
     # print_board()
 
+def remove_double(board, double, dubxy):
+    x1 = dubxy[0][0]
+    y1 = dubxy[0][1]
+    x2 = dubxy[1][0]
+    y2 = dubxy[1][1]
+    for i in range(9):
+        #print(board[x][i])
+        try:
+            board[x1][i].list.remove(double[0])
+        except ValueError:
+            pass
+        try:
+            board[x1][i].list.remove(double[1])
+        except ValueError:
+            pass
+        try:
+            board[i][y1].list.remove(double[0])
+        except ValueError:
+            pass
+        try:
+            board[i][y1].list.remove(double[1])
+        except ValueError:
+            pass
+        try:
+            board[x2][i].list.remove(double[0])
+        except ValueError:
+            pass
+        try:
+            board[x2][i].list.remove(double[1])
+        except ValueError:
+            pass
+        try:
+            board[i][y2].list.remove(double[0])
+        except ValueError:
+            pass
+        try:
+            board[i][y2].list.remove(double[1])
+        except ValueError:
+            pass
+
+    boxX = x1 - (x1%3)
+    boxY = y1 - (y1%3)
+
+    for j in range(boxX, boxX+3):
+        for k in range(boxY, boxY+3):
+            try:
+                board[j][k].list.remove(double[0])
+            except ValueError:
+                pass
+            try:
+                board[j][k].list.remove(double[1])
+            except ValueError:
+                pass
+            try:
+                board[j][k].list.remove(double[0])
+            except ValueError:
+                pass
+            try:
+                board[j][k].list.remove(double[1])
+            except ValueError:
+                pass
+
+    boxX = x2 - (x2%3)
+    boxY = y2 - (y2%3)
+
+    for j in range(boxX, boxX+3):
+        for k in range(boxY, boxY+3):
+            try:
+                board[j][k].list.remove(double[0])
+            except ValueError:
+                pass
+            try:
+                board[j][k].list.remove(double[1])
+            except ValueError:
+                pass
+            try:
+                board[j][k].list.remove(double[0])
+            except ValueError:
+                pass
+            try:
+                board[j][k].list.remove(double[1])
+            except ValueError:
+                pass
+
+    board[x1][y1].list = double
+    board[x2][y2].list = double
+
 
 # function for naked doubles
 def naked_doubles(board_obj):
     # find by row
+
     for x in range(9):
         # func to check if size=2 of each item list in the row
         # return the naked double
@@ -215,32 +303,46 @@ def naked_doubles(board_obj):
             continue
         else:
             # print("ROW VALUE: ",x+1)
+            dubxy = []
             for y in range(9):
                 # check if list of element = naked double
                 if double == board_obj[x][y].list:
                     # print("ENTERING THE ROW CELL: {}, {} ".format(x+1, y+1))
                     # print("double: ", double)
+                    print("ENTERING THE ROW CELL: {}, {} ".format(x+1, y+1))
+                    print("double: ", double)
+                    dubxy.append((x,y))
                     # then run the possibilities to remove it from
                     # neighboring cells
-                    calculate_poss(board_obj)
+                    #remove_double(board_obj, double, x, y)
+                    #calculate_poss(board_obj)
+            #print('dub',dubxy)
+            remove_double(board_obj, double, dubxy)
+            double = []
 
+    #print_board()
     # find by column
-    for y in range(9):
+    '''for y in range(9):
         # func to check if size=2 of each item list in the row
         # return the naked double
         double = get_double(board_obj[y])
         if len(double) == 0:
             continue
         else:
-            # print("ROW VALUE: ",x+1)
+            dubxy = []
+            print("ROW VALUE: ",double)
             for x in range(9):
                 # check if list of element = naked double
                 if double == board_obj[x][y].list:
-                    # print("ENTERING THE COL CELL: {}, {} ".format(x+1, y+1))
-                    # print("double: ", double)
+                    print("ENTERING THE COL CELL: {}, {} ".format(x+1, y+1))
+                    print("double: ", double)
+                    dubxy.append((x,y))
                     # then run the possibilities to remove it from
                     # neighboring cells
-                    calculate_poss(board_obj)
+            print('dub',dubxy)
+            remove_double(board_obj, double, dubxy)
+            double = []
+      '''
 
     # find by box
     # for x in range(9):
