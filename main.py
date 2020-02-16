@@ -21,7 +21,7 @@ def main():
     # s.naked_singles(s.board_objects)
     # s.print_board()
 
-    print("\nNAKED DOUBLES FUNCTION NOW")
+    # print("\nNAKED DOUBLES FUNCTION NOW")
     # s.naked_doubles(s.board_objects)
     # s.print_board()
 

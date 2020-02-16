@@ -285,44 +285,44 @@ def naked_doubles(board_obj):
 
 # set up naked triple -- PART 1, only checks for
 # full triples
-def naked_triple(board_obj):
-    # find by row
-    for x in range(9):
-        # func to check if size=2 of each item list in the row
-        # return the naked triple
-        triple = get_triple(board_obj[x])
-        if len(triple) == 0:
-            continue
-        else:
-            # print("ROW VALUE: ",x+1)
-            for y in range(9):
-                # check if list of element = naked triple
-                if triple == board_obj[x][y].list:
-                    print("ENTERING THE ROW CELL: {}, {} ".format(x+1, y+1))
-                    print("triple: ", triple)
-                    # then run the possibilities to remove it from
-                    # neighboring cells
-                    calculate_poss(board_obj)
-
-    # find by column
-    for y in range(9):
-        # func to check if size=2 of each item list in the row
-        # return the naked triple
-        triple = get_triple(board_obj[y])
-        if len(triple) == 0:
-            continue
-        else:
-            # print("ROW VALUE: ",x+1)
-            for x in range(9):
-                # check if list of element = naked triple
-                if triple == board_obj[x][y].list:
-                    # print("ENTERING THE COL CELL: {}, {} ".format(x+1, y+1))
-                    # print("triple: ", triple)
-                    # then run the possibilities to remove it from
-                    # neighboring cells
-                    calculate_poss(board_obj)
-
-    # ADD BOX FUNCTIONALITY
+# def naked_triple(board_obj):
+#     # find by row
+#     for x in range(9):
+#         # func to check if size=2 of each item list in the row
+#         # return the naked triple
+#         triple = get_triple(board_obj[x])
+#         if len(triple) == 0:
+#             continue
+#         else:
+#             # print("ROW VALUE: ",x+1)
+#             for y in range(9):
+#                 # check if list of element = naked triple
+#                 if triple == board_obj[x][y].list:
+#                     print("ENTERING THE ROW CELL: {}, {} ".format(x+1, y+1))
+#                     print("triple: ", triple)
+#                     # then run the possibilities to remove it from
+#                     # neighboring cells
+#                     calculate_poss(board_obj)
+#
+#     # find by column
+#     # for y in range(9):
+#     #     # func to check if size=2 of each item list in the row
+#     #     # return the naked triple
+#     #     triple = get_triple(board_obj[y])
+#     #     if len(triple) == 0:
+#     #         continue
+#     #     else:
+#     #         # print("ROW VALUE: ",x+1)
+#     #         for x in range(9):
+#     #             # check if list of element = naked triple
+#     #             if triple == board_obj[x][y].list:
+#     #                 # print("ENTERING THE COL CELL: {}, {} ".format(x+1, y+1))
+#     #                 # print("triple: ", triple)
+#     #                 # then run the possibilities to remove it from
+#     #                 # neighboring cells
+#     #                 calculate_poss(board_obj)
+#
+#     # ADD BOX FUNCTIONALITY
 
 
 # function to get naked double row/column
@@ -346,11 +346,50 @@ def get_triple(row):
         if len(i.list) == 3:
             triple_list.append(i.list)
 
-    # print(triple_list)
-
     # get duplicate if exists
     # params: list, double/triple val
-    return get_duplicate(triple_list, 3)
+    get_duplicate(triple_list, 3)
+
+    # catch all len 2 and append
+    # to double list
+    double_list = []
+    for i in row:
+        if len(i.list) == 2:
+            double_list.append(i.list)
+
+    # if double list = 3
+
+
+    length = len(double_list)
+    triple = []
+    combo = set()
+    found = False
+
+    #  get the combo triples
+    for i in range(length):
+        combo.update(double_list[i][0], double_list[i][1])
+        # combo.update(i[0], i[1])
+        for j in range(i+1, length):
+            combo.update(double_list[j][0], double_list[j][1])
+            if len(combo) > 3:
+                combo.remove(double_list[j][0])
+                combo.remove(double_list[j][1])
+                continue
+            elif len(combo) == 3:
+                for k in range(j+1, length):
+                    combo.update(double_list[k][0], double_list[k][1])
+                    if len(combo) > 3:
+                        combo.remove(double_list[k][0])
+                        combo.remove(double_list[k][1])
+                        continue
+                    elif len(combo) == 3:
+                        found = True
+                        triple.extend([double_list[k], double_list[j], double_list[i]])
+                        break
+                if found:
+                    break
+        if found:
+            break
 
 
 # function to find the duplicate in the
