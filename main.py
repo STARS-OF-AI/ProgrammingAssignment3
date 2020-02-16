@@ -14,18 +14,20 @@ def main():
     # initializing board
     s.create_board()
     s.calculate_poss(s.board_objects)
-    print("\nPRINTING FRESH BOARD")
+    #print("\nPRINTING FRESH BOARD")
     s.print_board()
+    s.backtrack(s.board_objects)
 
     # print("\nnaked single FUNCTION")
     # s.naked_singles(s.board_objects)
     # s.print_board()
 
     # print("\nNAKED DOUBLES FUNCTION NOW")
-    s.naked_doubles(s.board_objects)
+    #s.naked_doubles(s.board_objects)
+    print('\n solved board')
     s.print_board()
 
-    print("\nNAKED TRIPLE FUNCTION NOW")
+    #print("\nNAKED TRIPLE FUNCTION NOW")
     # s.naked_triple(s.board_objects)
     # s.print_board()
 

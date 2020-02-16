@@ -40,6 +40,212 @@ board = [
 # array of board objects
 board_objects = []
 
+def check_sudoku(grid):
+    for row in range(9):
+        for col in range(9):
+            # check value is an int
+            if grid[row][col] < 1 :
+                return False
+    # check the rows
+    for row in grid:
+        if sorted(list(set(row))) != sorted(row):
+            return False
+    # check the cols
+    cols = []
+    for col in range(len(grid)):
+        for row in grid:
+            cols += [row[col]]
+        # set will get unique values, its converted to list so you can compare
+        # it's sorted so the comparison is done correctly.
+        if sorted(list(set(cols))) != sorted(cols):
+            return False
+        cols = []
+    # if you get past all the false checks return True
+    return True
+
+def convert_to_numbers(board_objects):
+	board = []
+	for i in range(0, 9):
+		board_row = []
+		for j in range(0, 9):
+			board_row.append(board_objects[i][j].value)
+		board.append(board_row)
+	return board
+
+
+def hidden_singles(board_objects):
+
+	for k in range (1,10):
+		
+		for i in range (9):
+			row_possibility = []
+			for j in range(9):
+				if k in board_objects[i][j].list:
+					row_possibility.append(j)
+					if len(row_possibility) > 1:# and len(row_possibility) > 1:
+						break
+			if len(row_possibility) == 1 :
+				board_objects[i][row_possibility[0]].value = k
+				board_objects[i][row_possibility[0]].list = []
+				calculate_poss(board_objects)
+
+		
+		#print_board()
+		
+		for j in range (9):
+			column_possibility = []
+			for i in range(9):
+				if k in board_objects[i][j].list:
+					column_possibility.append(i)
+
+					if len(column_possibility) > 1:# and len(row_possibility) > 1:
+						break
+
+
+			if len(column_possibility) == 1 :
+				board_objects[column_possibility[0]][j].value = k
+				board_objects[column_possibility[0]][j].list = []
+				calculate_poss(board_objects)
+
+		#print_board()
+
+		for i in range (0,9): 
+			for j in range (0,9):
+				boxX = i - (i%3)
+				boxY = j - (j%3)
+				box_possibility = []
+				for p in range(boxX, boxX+3):
+					for q in range(boxY, boxY+3):
+						if k in board_objects[p][q].list:
+							box_possibility.append((p,q))
+
+				if len(box_possibility) == 1 :
+					board_objects[box_possibility[0][0]][ box_possibility[0][1]].value = k
+					board_objects[box_possibility[0][0]][ box_possibility[0][1]].list = []
+					calculate_poss(board_objects)
+
+
+def find_double_occuring_numbers(number_position):
+	doubly_occuring_numbers = []
+	for key,value in number_position.items():
+		if value[0] == 2 :
+			doubly_occuring_numbers.append((key,value[1]))
+
+	return doubly_occuring_numbers
+
+
+def hidden_pair_update_at_position(board_objects, dom,p,q):
+	hidden_pair_location = []
+	for i in range (len(dom[p][1])):
+		board_objects[dom[p][1][i][0]][dom[p][1][i][1]].list = [dom[p][0],dom[q][0]]
+		#hidden_pair_location.append(dom[p][1][i])
+	
+	#return hidden_pair_location
+
+
+
+def hidden_pair_process(board_objects,row_column , hidden_pair_update_function):
+	
+	for i in range (0,9):
+		if row_column == 'row':
+			row = i
+		else :
+			column = i
+		number_position = {}
+		for k in range(1,10):
+			number_position[k] = [0,[]]
+		for j in range (0,9):
+			
+			if row_column == 'row':
+				column = j
+			else :
+				row = j
+			for elem in board_objects[row][column].list:
+				number_position[elem][0] += 1
+				number_position[elem][1].append((row,column))
+
+		doubly_occuring_numbers = find_double_occuring_numbers(number_position)
+
+		hidden_pair = []
+		for p in range(len(doubly_occuring_numbers)):
+			for q in range(p+1, len(doubly_occuring_numbers)):
+
+				if doubly_occuring_numbers[p][1] == doubly_occuring_numbers[q][1]: 
+					hidden_pair_update_at_position(board_objects,doubly_occuring_numbers,p,q)
+
+	
+
+def hidden_pairs(board_objects):
+	
+	# finding row hidden pairs
+	hidden_pair_process(board_objects,'row',hidden_pair_update_row )	
+	# finding column hidden pairs
+	hidden_pair_process(board_objects,'column',hidden_pair_update_column )	
+
+	
+	# finding box hidden pairs
+	for i in range (0,9,): 
+		for j in range (0,9,3):
+			boxX = i - (i%3)
+			boxY = j - (j%3)
+			number_position = {}
+			box_possibility = []
+			for k in range(1,10):
+				number_position[k] = [0,[]]
+			for p in range(boxX, boxX+3):
+				for q in range(boxY, boxY+3):
+					for elem in board_objects[p][q].list:
+						number_position[elem][0] += 1
+						number_position[elem][1].append((p,q))
+		
+			doubly_occuring_numbers = find_double_occuring_numbers(number_position)
+			print (number_position)
+			print (len(doubly_occuring_numbers))
+			hidden_pair = []
+			for p in range(len(doubly_occuring_numbers)):
+				for q in range(p+1, len(doubly_occuring_numbers)):
+					if doubly_occuring_numbers[p][1] == doubly_occuring_numbers[q][1]: 
+						hidden_pair_update_at_position(board_objects,doubly_occuring_numbers,p,q)
+	
+
+def check_board_change(board_objects_before, board_objects):
+
+	#print_board()
+	for i in range(0,9):
+		for j in range(0,9):
+			if board_objects_before[i][j].list != board_objects[i][j].list:
+				return True
+
+	return False
+
+
+def inference_rules (board_objects):
+
+	board_objects_before = []
+	for i in range(0,9):
+		board_objects_before_row = []
+		for j in range(0,9):
+			board_objects_before_row.append(c.cell(board_objects[i][j].value, i, j))
+			board_objects_before_row[j].list = board_objects[i][j].list[:]			
+
+		board_objects_before.append(board_objects_before_row)
+		
+	naked_singles(board_objects)
+	hidden_singles(board_objects)
+	
+	naked_doubles(board_objects)
+	#hidden_pairs(board_objects)
+	#hidden_triples(board_objects)
+
+	print_board()
+	
+	if (check_sudoku(convert_to_numbers(board_objects))) : 
+		return
+
+	if check_board_change(board_objects_before,board_objects):
+		print ("change occured")
+		inference_rules(board_objects)
+		
 
 # calculate the list possibilities for each function
 def possibilities(board, x, y):
@@ -117,26 +323,26 @@ def select_var(board, n):
     if n == 1:
         for x in range(9):
             for y in range(9):
-                if board[x][y] == 0:
+                if board[x][y].value == 0:
                     return board[x][y]
     elif n == 2:
         return 0
         #run MRV to get var
 
-def arc_consistent():
-    # need to implement
-    return True
     
 def backtrack(board):
-    if board_complete(board):
+    #var = select_var(board, 1)
+    #print('var', var.x, var.y, var.value)
+    inference_rules(board)
+    if check_sudoku(board):
         return board
+
     var = select_var(board, 1)
     #make a move on selected var
-    if arc_consistent():
-        result = backtrack(board)
-        if result:
-            return result
-        #mayb eneed to remove vals from assignment
+    board[var.x][var.y].value = var.list[0]
+    result = backtrack(board)
+    if result:
+        return result
     return False
  
 ''' currently pseudocode
@@ -216,7 +422,7 @@ def naked_singles(board_obj):
                         print_board()
 
     print("\n*********PRINTING BOX BOARD********")
-    # print_board()
+    print_board()
 
 
 def remove_double(board, double, dubxy):
@@ -387,7 +593,7 @@ def naked_doubles(board_obj):
 
             # call duplicate function here and catch
             # the naked double
-            print("double list: ", double_list)
+            #print("double list: ", double_list)
             duplicate = get_duplicate(double_list, 2)
             # print("box duplicate: ", duplicate)
 
