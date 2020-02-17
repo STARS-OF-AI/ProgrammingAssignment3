@@ -311,16 +311,6 @@ def print_board():
 
 ################ BACKTRACKING FUNCTIONS ############
 
-#print(board)
-def board_complete(board):
-    for x in range(9):
-        for y in range(9):
-            if board[x][y].value != 0:
-                return False
-            print(board[x][y].value)
-    print('through the loops')
-    return True
-
 def select_var(board, n):
     if n == 1:
         for x in range(9):
@@ -329,7 +319,14 @@ def select_var(board, n):
                     return board[x][y]
         return 0
     elif n == 2:
-        return 0
+        minVar = 10
+        for x in range(9):
+            for y in range(9):
+                if len(board[x][y].list) < minVar:
+                    minVar = len(board[x][y].list)
+                    minVarLocation = [x, y]
+
+        return minVarLocation
         #run MRV to get var
     
 
@@ -339,11 +336,7 @@ def backtrack(board, i):
     #print('var', var.x, var.y, var.value)
     inference_rules(board)
     grid = convert_to_numbers(board)
-    if check_sudoku(grid):
-        print('board complete', i)
-        return board
-        
-    if board_complete(board) or i == 1000:
+    if check_sudoku(grid) or i == 1000:
         print('board complete', i)
         return board
 
@@ -551,7 +544,7 @@ def remove_triple(board, triple, dubxy):
     for i in range(9):
         #print(board[x][i])
         try:
-            board[x1][i].list.remove(double[0])
+            board[x1][i].list.remove(double[0])               
         except ValueError:
             pass
         try:

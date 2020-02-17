@@ -26,8 +26,8 @@ def main():
     # s.naked_doubles(s.board_objects)
     # s.print_board()
 
-    print("\nNAKED TRIPLE FUNCTION NOW")
-    s.naked_triple(s.board_objects)
+    #print("\nNAKED TRIPLE FUNCTION NOW")
+    #s.naked_triple(s.board_objects)
     s.print_board()
 
 
