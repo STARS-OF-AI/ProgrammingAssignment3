@@ -315,8 +315,10 @@ def print_board():
 def board_complete(board):
     for x in range(9):
         for y in range(9):
-            if board[x][y] != 0:
+            if board[x][y].value != 0:
                 return False
+            print(board[x][y].value)
+    print('through the loops')
     return True
 
 def select_var(board, n):
@@ -325,41 +327,59 @@ def select_var(board, n):
             for y in range(9):
                 if board[x][y].value == 0:
                     return board[x][y]
+        return 0
     elif n == 2:
         return 0
         #run MRV to get var
+    
 
     
-def backtrack(board):
+def backtrack(board, i):
     #var = select_var(board, 1)
     #print('var', var.x, var.y, var.value)
     inference_rules(board)
-    if check_sudoku(board):
+    grid = convert_to_numbers(board)
+    if check_sudoku(grid):
+        print('board complete', i)
+        return board
+        
+    if board_complete(board) or i == 1000:
+        print('board complete', i)
         return board
 
     var = select_var(board, 1)
     #make a move on selected var
-    board[var.x][var.y].value = var.list[0]
-    result = backtrack(board)
+    #print('bar', var)
+    try:
+        if var == 0:
+            #print('out of vars')
+            return False
+        #print('move', board[var.x][var.y].value, var.list[0])
+        board[var.x][var.y].value = var.list[0]
+        board[var.x][var.y].list = []
+        calculate_poss(board)
+        i+=1
+        result = backtrack(board, i)
+    except:
+        #print('move failed', var.value, board[var.x][var.y].list)
+        if len(board[var.x][var.y].list) > 0:
+            #print('in if')
+            board[var.x][var.y].value = 0
+            board[var.x][var.y].list.remove(var.value)
+            i+=1
+            result = backtrack(board, i)
+        else:
+            #print('ran out of possibilities')
+            return False
+        #print('move', board[var.x][var.y].value, var.list[0])
+        
     if result:
+        #print('result true')
         return result
+    #print('false result')
     return False
  
-''' currently pseudocode
-def backtrack(board)
-    # inference rule returns a move as a num, x and y then
-    if(check_location(board,x,y,num)): 
-              
-            # make move 
-            board[x][y]=num 
-  
-            if(backtrack(board): 
-                return True
-  
-            board[x][y] = 0 #undo move
-                 
-    return False 
-'''
+
 ################ INFERENCE FUNCTIONS ############
 
 
