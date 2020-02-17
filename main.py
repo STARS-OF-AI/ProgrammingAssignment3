@@ -14,8 +14,9 @@ def main():
     # initializing board
     s.create_board()
     s.calculate_poss(s.board_objects)
-    print("\nPRINTING FRESH BOARD")
+    #print("\nPRINTING FRESH BOARD")
     s.print_board()
+    s.backtrack(s.board_objects, 0)
 
     # print("\nnaked single FUNCTION")
     # s.naked_singles(s.board_objects)
