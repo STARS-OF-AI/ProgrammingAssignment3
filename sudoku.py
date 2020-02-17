@@ -11,6 +11,7 @@ import cell as c
 from prettytable import PrettyTable
 from collections import Counter
 import numpy as np
+import itertools
 
 # hardcoding the board for now (board feeder function goes here)
 
@@ -135,7 +136,7 @@ def hidden_pair_update_at_position(board_objects, dom,p,q):
 
 
 
-def hidden_pair_process(board_objects,row_column , hidden_pair_update_function):
+def hidden_pair_process(board_objects,row_column ):#, hidden_pair_update_function):
 	
 	for i in range (0,9):
 		if row_column == 'row':
@@ -168,36 +169,180 @@ def hidden_pair_process(board_objects,row_column , hidden_pair_update_function):
 
 def hidden_pairs(board_objects):
 	
-	# finding row hidden pairs
-	hidden_pair_process(board_objects,'row',hidden_pair_update_row )	
-	# finding column hidden pairs
-	hidden_pair_process(board_objects,'column',hidden_pair_update_column )	
+    # finding row hidden pairs
+    hidden_pair_process(board_objects,'row')#,hidden_pair_update_row )	
+    # finding column hidden pairs
+    hidden_pair_process(board_objects,'column')#,hidden_pair_update_column )	
 
+    
+    # finding box hidden pairs
+    for i in range (0,9,): 
+        for j in range (0,9,3):
+            boxX = i - (i%3)
+            boxY = j - (j%3)
+            number_position = {}
+            box_possibility = []
+            for k in range(1,10):
+                number_position[k] = [0,[]]
+            for p in range(boxX, boxX+3):
+                for q in range(boxY, boxY+3):
+                    for elem in board_objects[p][q].list:
+                        number_position[elem][0] += 1
+                        number_position[elem][1].append((p,q))
+
+            doubly_occuring_numbers = find_double_occuring_numbers(number_position)
+            #print (number_position)
+            #print (len(doubly_occuring_numbers))
+            hidden_pair = []
+            for p in range(len(doubly_occuring_numbers)):
+                for q in range(p+1, len(doubly_occuring_numbers)):
+                    if doubly_occuring_numbers[p][1] == doubly_occuring_numbers[q][1]: 
+                        hidden_pair_update_at_position(board_objects,doubly_occuring_numbers,p,q)
+
+
+def hidden_triples_process(board_objects,row_column):
 	
-	# finding box hidden pairs
-	for i in range (0,9,): 
-		for j in range (0,9,3):
-			boxX = i - (i%3)
-			boxY = j - (j%3)
-			number_position = {}
-			box_possibility = []
-			for k in range(1,10):
-				number_position[k] = [0,[]]
-			for p in range(boxX, boxX+3):
-				for q in range(boxY, boxY+3):
-					for elem in board_objects[p][q].list:
-						number_position[elem][0] += 1
-						number_position[elem][1].append((p,q))
-		
-			doubly_occuring_numbers = find_double_occuring_numbers(number_position)
-			print (number_position)
-			print (len(doubly_occuring_numbers))
-			hidden_pair = []
-			for p in range(len(doubly_occuring_numbers)):
-				for q in range(p+1, len(doubly_occuring_numbers)):
-					if doubly_occuring_numbers[p][1] == doubly_occuring_numbers[q][1]: 
-						hidden_pair_update_at_position(board_objects,doubly_occuring_numbers,p,q)
+    for i in range(0,9):
+            if row_column == 'row':
+                    row = i
+                    empty_positions = [(row,k) for k in range(0,9)]
+            else :
+                    column = i
+                    empty_positions = [(k,column) for k in range(0,9)]
+            existing_values = [k for k in range(1,10)]
+            pos_triplets = {}
+            nos_triplets = {}
+            #print ("em,pty positiosn", empty_positions)
+            for j in range(0,9):
+                    if row_column == 'row':
+                            column = j
+                    else :
+                            row = j
+                    if board_objects[row][column].value != 0 :
+                            if board_objects[row][column].value in existing_values:        
+                                existing_values.remove(board_objects[row][column].value)
+                            empty_positions.remove((row,column))
+                            
+            combinations = list(itertools.combinations(existing_values, 3))
+            combinations_positions = list(itertools.combinations(empty_positions, 3))
+            #print (combinations_row)
+            #print (combinations_row_positions)
+            
+            for elem in combinations :
+                    nos_triplets[elem] = [0,[]] 
+
+            for elem in combinations_positions :
+                    pos_triplets[elem] = [] 
+            
+            
+            for key_pos, value_pos in pos_triplets.items():	
+                    for elem in key_pos :
+                            for number in board_objects[elem[0]][elem[1]].list:
+                                    if number not in value_pos :
+                                            pos_triplets[key_pos].append(number)
+
+
+            for key_pos, value_pos in pos_triplets.items():	
+                    for key_nos, value_nos in nos_triplets.items():
+                            if all(x in value_pos for x in list(key_nos)):
+                                    flag_all = []
+                                    for elem in key_pos :
+                                            flag = 0
+                                            #for number in board_objects[elem[0]][elem[1]].list:
+                                            for item in key_nos : 
+                                                    if item in  board_objects[elem[0]][elem[1]].list:
+                                                            flag = 1
+                                            flag_all.append(flag)
+                                    if sum(flag_all) == 3:
+                                            nos_triplets[key_nos][0] += 1
+                                            nos_triplets[key_nos][1].append(key_pos)
+                                    
+
+                            
+            for key_nos, value_pos in nos_triplets.items():
+                    #print ("Value pos : ", value_pos[0])
+                    if value_pos[0] == 1 :
+                            for item in value_pos[1][0]:
+                                    #board_objects[item[0]][item[1]].list = list(key_nos)
+                                    for elem in board_objects[item[0]][item[1]].list:
+                                            if elem not in list(key_nos):	
+                                                    board_objects[item[0]][item[1]].list.remove(elem)
+                            #	print ("Removing triples", key_nos, value_pos)
+
+
+def hidden_triples(board_objects):
 	
+	hidden_triples_process(board_objects,'row')
+	hidden_triples_process(board_objects,'column')
+
+	for i in range(0,9,3):
+
+		#print ("em,pty positiosn", empty_positions)
+            for j in range(0,9,3):
+
+                existing_values = [k for k in range(1,10)]
+                pos_triplets = {}
+                nos_triplets = {}
+
+                boxX = i - (i%3)
+                boxY = j - (j%3)
+                empty_positions = []
+                for p in range(boxX, boxX+3):
+                    for q in range(boxY, boxY+3):
+                        empty_positions.append((p,q))#[(k,column) for k in range(0,9)]
+                for p in range(boxX, boxX+3):
+                    for q in range(boxY, boxY+3):
+                        if board_objects[p][q].value != 0 :
+                            existing_values.remove(board_objects[p][q].value)
+                            empty_positions.remove((p,q))
+                        
+                combinations = list(itertools.combinations(existing_values, 3))
+                combinations_positions = list(itertools.combinations(empty_positions, 3))
+                #print (combinations_row)
+                #print (combinations_row_positions)
+                
+                for elem in combinations :
+                    nos_triplets[elem] = [0,[]] 
+
+                for elem in combinations_positions :
+                    pos_triplets[elem] = [] 
+                
+                
+                for key_pos, value_pos in pos_triplets.items():	
+                    for elem in key_pos :
+                        for number in board_objects[elem[0]][elem[1]].list:
+                            if number not in value_pos :
+                                pos_triplets[key_pos].append(number)
+
+
+                for key_pos, value_pos in pos_triplets.items():	
+                    for key_nos, value_nos in nos_triplets.items():
+                        if all(x in value_pos for x in list(key_nos)):
+                            flag_all = []
+                            for elem in key_pos :
+                                flag = 0
+                                #for number in board_objects[elem[0]][elem[1]].list:
+                                for item in key_nos : 
+                                    if item in  board_objects[elem[0]][elem[1]].list:
+                                        flag = 1
+                                flag_all.append(flag)
+                            if sum(flag_all) == 3:
+                                nos_triplets[key_nos][0] += 1
+                                nos_triplets[key_nos][1].append(key_pos)
+                            
+
+                                
+                for key_nos, value_pos in nos_triplets.items():
+                    #print ("Value pos : ", value_pos[0])
+                    if value_pos[0] == 1 :
+                        for item in value_pos[1][0]:
+                            #board_objects[item[0]][item[1]].list = list(key_nos)
+                            for elem in board_objects[item[0]][item[1]].list:
+                                if elem not in list(key_nos):	
+                                    board_objects[item[0]][item[1]].list.remove(elem)
+                            #print ("Removing triples", key_nos, value_pos)
+
+
 
 def check_board_change(board_objects_before, board_objects):
 
@@ -224,19 +369,19 @@ def inference_rules (board_objects):
 	naked_singles(board_objects)
 	hidden_singles(board_objects)
 	
-	naked_doubles(board_objects)
+	#naked_doubles(board_objects)
 	#hidden_pairs(board_objects)
 
-	naked_triple(board_objects)
+	#naked_triple(board_objects)
 	#hidden_triples(board_objects)
 
-	print_board()
+	#print_board()
 	
 	if (check_sudoku(convert_to_numbers(board_objects))) : 
 		return
 
 	if check_board_change(board_objects_before,board_objects):
-		print ("change occured")
+		#print ("change occured")
 		inference_rules(board_objects)
 		
 
@@ -333,18 +478,18 @@ def backtrack(board, i):
     #print('solving this board', board)
     inference_rules(board)
     grid = convert_to_numbers(board)
-    print('grid', grid)
+    #print('grid', grid)
     if check_sudoku(grid) or i == 1000:
         print('board complete', i)
-        return board
+        return i
 
     var = select_var(board, 1)
     #make a move on selected var
     #print('bar', var)
     try:
         if var == 0:
-            #print('out of vars')
-            return False
+            print('out of vars')
+            return i
         #print('move', board[var.x][var.y].value, var.list[0])
         board[var.x][var.y].value = var.list[0]
         board[var.x][var.y].list = []
@@ -360,14 +505,14 @@ def backtrack(board, i):
             i+=1
             result = backtrack(board, i)
         else:
-            #print('ran out of possibilities')
-            return False
+            print('ran out of possibilities')
+            return i
         #print('move', board[var.x][var.y].value, var.list[0])
         
     if result:
-        #print('result true')
-        return result
-    #print('false result')
+        print('result true', result)
+        return i
+    print('false result')
     return False
  
 
@@ -390,7 +535,7 @@ def naked_singles(board_obj):
 
                 # remove all the singles across row, column, box
                 calculate_poss(board_obj)
-                print("\nrow single value found: ", val)
+                #print("\nrow single value found: ", val)
 
     # print("\n******PRINTING AFTER ROW BOARD**********")
     # print_board()
@@ -405,11 +550,11 @@ def naked_singles(board_obj):
                 board_obj[x][y].list.clear()
 
                 calculate_poss(board_obj)
-                print("\ncol single value found: ", val)
+                #print("\ncol single value found: ", val)
                 # print_board()
 
-    print("\n*********PRINTING AFTER COL BOARD********")
-    print_board()
+    #print("\n*********PRINTING AFTER COL BOARD********")
+    #print_board()
 
     # find by box
     # only doing 0, 3, 6 to traverse
@@ -429,11 +574,11 @@ def naked_singles(board_obj):
                         board_obj[j][k].list.clear()
 
                         calculate_poss(board_obj)
-                        print("\nbox single value found: ", val)
-                        print_board()
+                        #print("\nbox single value found: ", val)
+                        #print_board()
 
-    print("\n*********PRINTING BOX BOARD********")
-    print_board()
+    #print("\n*********PRINTING BOX BOARD********")
+    #print_board()
 
 def remove_double(board, double, dubxy):
     x1 = dubxy[0][0]
@@ -538,7 +683,7 @@ def remove_triple(board, triple, dubxy):
     y2 = dubxy[1][1]
     x3 = dubxy[2][0]
     y3 = dubxy[2][1]
-    print('xy:', backup)
+    #print('xy:', backup)
     for i in range(9):
         #print(board[x][i])
         try:
@@ -676,7 +821,7 @@ def remove_triple(board, triple, dubxy):
     board[x1][y1].list = list(triple[0])
     board[x2][y2].list = list(triple[1])
     board[x3][y3].list = list(triple[2])
-    print_board()
+    #print_board()
         
 
     
@@ -697,8 +842,8 @@ def naked_doubles(board_obj):
             for y in range(9):
                 # check if list of element = naked double
                 if double == board_obj[x][y].list:
-                    print("ENTERING THE ROW CELL: {}, {} ".format(x, y))
-                    print("double: ", double)
+                    #print("ENTERING THE ROW CELL: {}, {} ".format(x, y))
+                    #print("double: ", double)
                     dubxy.append((x,y))
                     # then run the possibilities to remove it from
                     # neighboring cells
@@ -708,7 +853,7 @@ def naked_doubles(board_obj):
             remove_double(board_obj, double, dubxy)
             double = []
 
-    print_board()
+    #print_board()
 
     # find by column
     for y in range(9):
@@ -721,23 +866,23 @@ def naked_doubles(board_obj):
 
         double = get_duplicate(double_list, 2)
         # double = get_double(double_list)
-        print(y)
-        print(double)
+        #print(y)
+        #print(double)
         if len(double) == 0:
             continue
         else:
             dubxy = []
-            print("ROW VALUE: ",double)
+            #print("ROW VALUE: ",double)
             for x in range(9):
 
                 # check if list of element = naked double
                 if double == board_obj[x][y].list:
-                    print("ENTERING THE COL CELL: {}, {} ".format(x+1, y+1))
-                    print("double: ", double)
+                    #print("ENTERING THE COL CELL: {}, {} ".format(x+1, y+1))
+                    #print("double: ", double)
                     dubxy.append((x,y))
                     # then run the possibilities to remove it from
                     # neighboring cells
-            print('dub',dubxy)
+            #print('dub',dubxy)
             remove_double(board_obj, double, dubxy)
             double = []
 
@@ -773,9 +918,9 @@ def naked_doubles(board_obj):
                             # print("ENTERING THE BOX CELL: {}, {} ".format(j, k))
                             # print(duplicate)
                             dubxy.append((j,k))
-                print('dubBBBBBBBBBB: ',dubxy)
+                #print('dubBBBBBBBBBB: ',dubxy)
                 remove_double(board_obj, duplicate, dubxy)
-                print("removed duplicate: ", duplicate)
+                #print("removed duplicate: ", duplicate)
                 print_board()
                 double = []
 
@@ -796,8 +941,8 @@ def naked_triple(board_obj):
             for y in range(9):
                 # check if list of element = naked triple
                 if triple[0] == board_obj[x][y].list:
-                    print("ENTERING THE ROW CELL: {}, {} ".format(x, y))
-                    print("naked triple: ", triple)
+                    #print("ENTERING THE ROW CELL: {}, {} ".format(x, y))
+                    #print("naked triple: ", triple)
                     tripxy.append((x,y))
                 elif triple[1] == board_obj[x][y].list:
                     tripxy.append((x,y))
@@ -805,7 +950,7 @@ def naked_triple(board_obj):
                     tripxy.append((x,y))
                     #remove_double(board_obj, triple, x, y)
                     #calculate_poss(board_obj)
-            print('trip row',tripxy)
+            #print('trip row',tripxy)
             remove_triple(board_obj, triple, tripxy)
             triple = []
 
@@ -843,7 +988,7 @@ def naked_triple(board_obj):
                     tripxy.append((x,y))
                     # then run the possibilities to remove it from
                     # neighboring cells
-            print('triple col: ',tripxy)
+            #print('triple col: ',tripxy)
             remove_triple(board_obj, triple, tripxy)
             triple = []
 
@@ -887,7 +1032,7 @@ def naked_triple(board_obj):
                             # print(triple)
                             tripxy.append((j,k))
                             
-                print('dubBBBtrtrtrBBBBBBB: ',triple, tripxy)
+                #print('dubBBBtrtrtrBBBBBBB: ',triple, tripxy)
                 remove_triple(board_obj, triple, tripxy)
                 #print("removed triple: ", triple)
                 print_board()
@@ -1027,57 +1172,6 @@ def get_duplicate(seq, val):
 
 
 
-
-
-
-########################### DEAD CODE ###########################
-    
-# def possibilities(board, x, y):
-#     possList = []
-#     if board[x][y] == 0:
-#         rowP = [1,2,3,4,5,6,7,8,9]
-#         colP = [1,2,3,4,5,6,7,8,9]
-#         boxP = [1,2,3,4,5,6,7,8,9]
-#         for i in range(9):
-#             if board[x][i] != 0:
-#                 rowP.remove(board[x][i])
-#             if board[i][y] != 0:
-#                 #print('removing', board[i][y], colP)
-#                 #print('i', i)
-#                 colP.remove(board[i][y])
-#
-#
-#         #iterate through box
-#         boxX = x - (x%3)
-#         boxY = y - (y%3)
-#         #print('box', boxX, boxY)
-#         for j in range(2):
-#             for k in range(2):
-#                 if board[j][k] != 0:
-#                     boxP.remove(board[j][k])
-#
-#         for z in range(9):
-#             if z in rowP and z in colP and z in boxP:
-#                 possList.append(z)
-#         #print(possList, rowP, colP, boxP)
-#         return possList
-#     else:
-#         return 0 #no available numbers
-        
-# def calculate_possible_vals(board):
-#     possible_vals = [[[0 for k in range(9)] for j in range(9)] for i in range(9)]
-#
-#     for x in range(9):
-#         for y in range(9):
-#             possible_vals[x][y] = possibilities(board, x, y)
-#             #print(possible_vals)
-#     return possible_vals
-#
-# p_vals = calculate_possible_vals(board)
-#
-# print(p_vals)
-#print(p_vals[1][1], len(p_vals[1][1]))
-#backtrack(board)
 
 
 

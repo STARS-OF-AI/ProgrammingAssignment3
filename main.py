@@ -8,19 +8,26 @@ February 17, 2020
 """
 
 import sudoku as s
-
-board = [
-[2,4,0, 3,0,0, 0,0,0],
-[0,0,0, 5,2,0, 4,0,7],
-[0,0,0, 0,4,6, 0,0,8],
-[6,1,0, 7,0,0, 0,8,4],
-[0,0,9, 0,6,0, 5,0,0],
-[7,3,0, 0,0,5, 0,6,1],
-[1,0,0, 4,7,0, 0,0,0],
-[3,0,2, 0,5,1, 0,0,0],
-[0,0,0, 0,0,2, 0,1,9]]
+from pandas import DataFrame
 
 boards = []
+
+def get_score(solved, starting):
+    s1 = s.convert_to_numbers(solved)
+    score = 0
+    unsolve = 0
+    num_start = 0
+    for i in range(9):
+        for j in range(9):
+            if s1[i][j] == 0:
+                unsolve += 1     
+            elif s1[i][j] == starting[i][j]:
+                num_start +=1
+            else:
+                score += 1
+    percent_correct = (score+num_start)/81
+    print('Score: ', percent_correct)
+    return percent_correct
 
 def main():
     f = open('sudoku-problems.txt', 'r')
@@ -41,6 +48,7 @@ def main():
     print(boards[0][1])
     b_instance = []
     b_row = []
+    scores = []
     for i in range (len(boards)):
         for j in range(1, len(boards[i])):
             for k in range (len(boards[i][j])):
@@ -54,17 +62,23 @@ def main():
             
         #print('i', i, boards[i])
         if len(boards[i]) == 0:
+            print('Final Scores: ', scores) 
+            s2 = DataFrame(scores)
+            print(s2)
+            s2.to_csv('scores.csv')
             return
         print('Attempting to solve:', boards[i][0], b_instance)
         s.create_board(b_instance)
         s.calculate_poss(s.board_objects)
-        s.print_board()
-        
-        s.backtrack(s.board_objects, 0)
         #s.print_board()
-        b_instance = []
         
-       
+        iter_depth = s.backtrack(s.board_objects, 0)
+        s.print_board()
+        curr_score = (boards[i][0], get_score(s.board_objects, b_instance), iter_depth)
+        b_instance = []
+        scores.append(curr_score)    
+    
+    
                                       
         
 
