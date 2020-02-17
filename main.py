@@ -22,12 +22,12 @@ def main():
     # s.print_board()
 
     # print("\nNAKED DOUBLES FUNCTION NOW")
-    s.naked_doubles(s.board_objects)
-    s.print_board()
+    # s.naked_doubles(s.board_objects)
+    # s.print_board()
 
     print("\nNAKED TRIPLE FUNCTION NOW")
-    # s.naked_triple(s.board_objects)
-    # s.print_board()
+    s.naked_triple(s.board_objects)
+    s.print_board()
 
 
 if __name__ == "__main__":
