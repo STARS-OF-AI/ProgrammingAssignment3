@@ -13,16 +13,7 @@ from collections import Counter
 import numpy as np
 
 # hardcoding the board for now (board feeder function goes here)
-board = [
-[2,4,0, 3,0,0, 0,0,0],
-[0,0,0, 5,2,0, 4,0,7],
-[0,0,0, 0,4,6, 0,0,8],
-[6,1,0, 7,0,0, 0,8,4],
-[0,0,9, 0,6,0, 5,0,0],
-[7,3,0, 0,0,5, 0,6,1],
-[1,0,0, 4,7,0, 0,0,0],
-[3,0,2, 0,5,1, 0,0,0],
-[0,0,0, 0,0,2, 0,1,9]]
+
 
 
 # board = [
@@ -272,7 +263,7 @@ def possibilities(board, x, y):
 
 
 # append cells into sudoku board
-def create_board():
+def create_board(board):
     for i in range (9):
         board_objects_row = []
         for j in range (9) :
