@@ -1,5 +1,5 @@
 """
-Christopher Mendez & Rupika Dikkala
+Christopher Mendez, Rupika Dikkala & Rajesh
 Programming Assignment 3
 Sudoku
 CS 531 - AI
@@ -55,10 +55,11 @@ def main():
         #print('i', i, boards[i])
         if len(boards[i]) == 0:
             return
-        print('Attempting to solve:', boards[i][0])
+        print('Attempting to solve:', boards[i][0], b_instance)
         s.create_board(b_instance)
         s.calculate_poss(s.board_objects)
         s.print_board()
+        
         s.backtrack(s.board_objects, 0)
         #s.print_board()
         b_instance = []

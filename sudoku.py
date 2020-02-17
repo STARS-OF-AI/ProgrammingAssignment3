@@ -1,5 +1,5 @@
 """
-Christopher Mendez & Rupika Dikkala
+Christopher Mendez, Rupika Dikkala & Rajesh **
 Programming Assignment 3
 Sudoku
 CS 531 - AI
@@ -266,6 +266,8 @@ def possibilities(board, x, y):
 
 # append cells into sudoku board
 def create_board(board):
+    global board_objects
+    board_objects = []
     for i in range (9):
         board_objects_row = []
         for j in range (9) :
@@ -325,10 +327,13 @@ def select_var(board, n):
 
     
 def backtrack(board, i):
+    #board_objects = []
     #var = select_var(board, 1)
     #print('var', var.x, var.y, var.value)
+    #print('solving this board', board)
     inference_rules(board)
     grid = convert_to_numbers(board)
+    print('grid', grid)
     if check_sudoku(grid) or i == 1000:
         print('board complete', i)
         return board
@@ -783,20 +788,24 @@ def naked_triple(board_obj):
         # func to check if size=2 of each item list in the row
         # return the naked triple
         triple = get_triple(board_obj[x], [])
-        print("tripleeeee:", triple)
+        #print("tripleeeee:", triple)
         if len(triple) == 0:
             continue
         else:
             tripxy = []
             for y in range(9):
                 # check if list of element = naked triple
-                if triple == board_obj[x][y].list:
+                if triple[0] == board_obj[x][y].list:
                     print("ENTERING THE ROW CELL: {}, {} ".format(x, y))
                     print("naked triple: ", triple)
                     tripxy.append((x,y))
+                elif triple[1] == board_obj[x][y].list:
+                    tripxy.append((x,y))
+                elif triple[2] == board_obj[x][y].list:
+                    tripxy.append((x,y))
                     #remove_double(board_obj, triple, x, y)
                     #calculate_poss(board_obj)
-            #print('dub',tripxy)
+            print('trip row',tripxy)
             remove_triple(board_obj, triple, tripxy)
             triple = []
 
@@ -817,24 +826,24 @@ def naked_triple(board_obj):
             continue
         else:
             tripxy = []
-            print("ROW VALUE: ",triple)
+            #print("ROW VALUE: ",triple)
             for x in range(9):
                 # check if list of element = naked triple
                 if triple[0] == board_obj[x][y].list:
-                    print("ENTERING THE COL CELL: {}, {} ".format(x, y))
-                    print("triple: ", triple[0])
+                   # print("ENTERING THE COL CELL: {}, {} ".format(x, y))
+                    #print("triple: ", triple[0])
                     tripxy.append((x,y))
                 elif triple[1] == board_obj[x][y].list:
-                    print("ENTERING THE COL CELL: {}, {} ".format(x, y))
-                    print("triple: ", triple[0])
+                   # print("ENTERING THE COL CELL: {}, {} ".format(x, y))
+                    #print("triple: ", triple[0])
                     tripxy.append((x,y))
                 elif triple[2] == board_obj[x][y].list:
-                    print("ENTERING THE COL CELL: {}, {} ".format(x, y))
-                    print("triple: ", triple[0])
+                   # print("ENTERING THE COL CELL: {}, {} ".format(x, y))
+                    #print("triple: ", triple[0])
                     tripxy.append((x,y))
                     # then run the possibilities to remove it from
                     # neighboring cells
-            print('triple: ',tripxy)
+            print('triple col: ',tripxy)
             remove_triple(board_obj, triple, tripxy)
             triple = []
 
@@ -854,7 +863,7 @@ def naked_triple(board_obj):
                         pairs.append(board_obj[j][k].list)
 
             # catch naked triple
-            print("pair list: ", pairs)
+            #print("pair list: ", pairs)
             triple = get_triple([], pairs)
 
             if len(triple) == 0:
@@ -862,16 +871,25 @@ def naked_triple(board_obj):
             else:
                 # remove the naked double from each
                 # cell in the box
-                dubxy = []
+                tripxy= []
                 for j in range(box_x, box_x+3):
                     for k in range(box_y, box_y+3):
-                        if triple == board_obj[j][k].list:
+                        if triple[0] == board_obj[j][k].list:
                             # print("ENTERING THE BOX CELL: {}, {} ".format(j, k))
                             # print(triple)
-                            dubxy.append((j,k))
-                print('dubBBBBBBBBBB: ',dubxy)
+                            tripxy.append((j,k))
+                        elif triple[1] == board_obj[j][k].list:
+                            # print("ENTERING THE BOX CELL: {}, {} ".format(j, k))
+                            # print(triple)
+                            tripxy.append((j,k))
+                        elif triple[2] == board_obj[j][k].list:
+                            # print("ENTERING THE BOX CELL: {}, {} ".format(j, k))
+                            # print(triple)
+                            tripxy.append((j,k))
+                            
+                print('dubBBBtrtrtrBBBBBBB: ',triple, tripxy)
                 remove_triple(board_obj, triple, tripxy)
-                print("removed triple: ", triple)
+                #print("removed triple: ", triple)
                 print_board()
                 double = []
 
