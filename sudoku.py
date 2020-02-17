@@ -226,6 +226,8 @@ def inference_rules (board_objects):
 	
 	naked_doubles(board_objects)
 	#hidden_pairs(board_objects)
+
+	naked_triple(board_objects)
 	#hidden_triples(board_objects)
 
 	print_board()

@@ -52,7 +52,9 @@ def main():
             b_instance.append(b_row)
             b_row = []
             
-        
+        #print('i', i, boards[i])
+        if len(boards[i]) == 0:
+            return
         print('Attempting to solve:', boards[i][0])
         s.create_board(b_instance)
         s.calculate_poss(s.board_objects)
