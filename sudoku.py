@@ -494,13 +494,13 @@ def backtrack(board, i):
         print('board complete', i)
         return i
 
-    var = select_var(board, 1)
+    var = select_var(board, 2)
     #make a move on selected var
     #print('bar', var.x, var.y, var.value)
     try:
         if var == 0:
             print('out of vars')
-            return result
+            return i
         
         #print('move', board[var.x][var.y].value, var.list[0])
         board[var.x][var.y].value = var.list[0]
@@ -849,7 +849,99 @@ def remove_triple(board, triple, dubxy, where):
     print_board()
         
 
-    
+def remove_triple_rajesh(board, triple, dubxy, where):
+    print('removing triple', triple, dubxy, where)
+    temp = set()
+    backup = set()
+    for z in range(3):
+        for z2 in range(len(triple[z]))
+            temp.add(triple[z][z2])
+            temp.add(triple[z][z2])
+        backup.add(tuple(triple[z]))
+        
+    double = list(temp)
+
+    x1 = dubxy[0][0]
+    y1 = dubxy[0][1]
+    x2 = dubxy[1][0]
+    y2 = dubxy[1][1]
+    x3 = dubxy[2][0]
+    y3 = dubxy[2][1]
+
+    if where == 'row':
+        for i in range(9):
+            for j in range(len(double)):
+                try:
+                    board[x1][i].list.remove(double[j])               
+                except ValueError:
+                    pass
+                try:
+                    board[x2][i].list.remove(double[j])
+                except ValueError:
+                    pass
+                try:
+                    board[x3][i].list.remove(double[j])
+                except ValueError:
+                    pass
+              
+    elif where == 'col':
+        for i in range(9):
+            for j in range(len(double)):
+                try:
+                    board[i][y1].list.remove(double[j])
+                except ValueError:
+                    pass
+                try:
+                    board[i][y2].list.remove(double[j])
+                except ValueError:
+                    pass
+                try:
+                    board[i][y3].list.remove(double[j])
+                except ValueError:
+                    pass
+    elif where == 'box':
+        boxX = x1 - (x1%3)
+        boxY = y1 - (y1%3)
+
+        for j in range(boxX, boxX+3):
+            for k in range(boxY, boxY+3):
+                for l in range(len(double)):
+                    try:
+                        board[j][k].list.remove(double[l])
+                    except ValueError:
+                        pass
+
+
+        boxX = x2 - (x2%3)
+        boxY = y2 - (y2%3)
+
+        for j in range(boxX, boxX+3):
+            for k in range(boxY, boxY+3):
+                for l in range(len(double)):
+                    try:
+                        board[j][k].list.remove(double[l])
+                    except ValueError:
+                        pass
+        boxX = x3 - (x3%3)
+        boxY = y3 - (y3%3)
+
+        for j in range(boxX, boxX+3):
+            for k in range(boxY, boxY+3):
+                for l in range(len(double)):
+                    try:
+                        board[j][k].list.remove(double[l])
+                    except ValueError:
+                        pass
+
+
+
+    triple = list(backup)
+    print('add back', triple[0], triple[1], triple[2], backup)
+    board[x1][y1].list = list(triple[2])
+    board[x2][y2].list = list(triple[0])
+    board[x3][y3].list = list(triple[1])
+    print_board()
+       
 
 
 # function for naked doubles
@@ -1090,6 +1182,7 @@ def get_double(arr):
 
 # function to get naked triple row/column
 def get_triple(arr, pair_list):
+    #[2,6] [2,7] [3,6] [3,7]
     if len(arr) == 0 and len(pair_list) == 0:
         return []
 
@@ -1105,6 +1198,7 @@ def get_triple(arr, pair_list):
    
     # if double list has a naked triple
     # possibility
+    
     if len(double_list) >= 3:
         length = len(double_list)
         triple = []
@@ -1123,7 +1217,12 @@ def get_triple(arr, pair_list):
             combo.add(double_list[i][1])
 
             # add tuple pair to set
-            pairs.add((double_list[i][0], double_list[i][1]))
+            if i > 1:
+                test_var = double_list[i] and double_list[i-1] and double_list[i-2]
+                if test_var == 3:
+                    pairs.add((double_list[i][0], double_list[i][1]))
+                    pairs.add((double_list[i-1][0], double_list[i-1][1]))
+                    pairs.add((double_list[i-2][0], double_list[i-2][1]))
 
             # start at the next value in list
             for j in range(i+1, length):
