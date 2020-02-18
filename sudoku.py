@@ -1379,7 +1379,64 @@ def get_duplicate(seq, val):
         return []
 
 
+def naked_triples_process(board_objects, row_column):
+    print("in triples 2")
+    for i in range(0, 9):
+        if row_column == 'row':
+            row = i
+            empty_positions = [(row, k) for k in range(0, 9)]
+        else:
+            column = i
+            empty_positions = [(k, column) for k in range(0, 9)]
 
+        existing_values = [k for k in range(1, 10)]
+        pos_triplets = {}
+        nos_triplets = {}
+        for j in range(0, 9):
+            if row_column == 'row':
+                column = j
+            else:
+                row = j
+            if board_objects[row][column].value != 0:
+                if board_objects[row][column].value in existing_values:
+                    existing_values.remove(board_objects[row][column].value)
+                empty_positions.remove((row, column))
+        combinations = list(itertools.combinations(existing_values, 3))
+        combinations_positions = list(itertools.combinations(empty_positions, 3))
+
+        # for elem in combinations :
+        #        nos_triplets[elem] = [0,[]]
+
+        for elem in combinations_positions:
+            pos_triplets[elem] = []
+
+        for key_pos, value_pos in pos_triplets.items():
+            for elem in key_pos:
+                for number in board_objects[elem[0]][elem[1]].list:
+                    if number not in value_pos:
+                        pos_triplets[key_pos].append(number)
+
+        # for key_pos , value_pos in pos_triples.items():
+        # print (pos_triplets)
+        triples_location = {}
+
+        for key_pos, value_pos in pos_triplets.items():
+            if len(value_pos) == 3:
+                triples_location[tuple(value_pos)] = list(key_pos)
+
+        print_board()
+        print(triples_location)
+        for key, value in triples_location.items():
+            triples_lists = []
+            print(value)
+            for item in value:
+                triples_lists.append(board_objects[item[0]][item[1]].list)
+            print(triples_lists)
+            remove_triple_rajesh(board_objects, triples_lists, value, row_column)
+
+
+def naked_triples_rajesh(board_objects):
+    naked_triples_process(board_objects, 'row')
 
 
 
