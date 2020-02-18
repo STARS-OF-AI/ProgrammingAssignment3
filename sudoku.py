@@ -369,6 +369,10 @@ def inference_rules (board_objects):
 	naked_singles(board_objects)
 	hidden_singles(board_objects)
 
+	if check_board_change(board_objects_before,board_objects):
+		print ("change occured")
+		print_board()
+		inference_rules(board_objects)
 
 	#print('doing doubles')
 	#print_board()
@@ -376,8 +380,8 @@ def inference_rules (board_objects):
 	#print_board()
 	hidden_pairs(board_objects)
 
-	#naked_triple(board_objects)
-	#hidden_triples(board_objects)
+	naked_triple(board_objects)
+	hidden_triples(board_objects)
 
 	#print_board()
 	
@@ -385,8 +389,10 @@ def inference_rules (board_objects):
 		return
 
 	if check_board_change(board_objects_before,board_objects):
-		#print ("change occured")
+		print ("change occured")
+		print_board()
 		inference_rules(board_objects)
+	
 		
 
 # calculate the list possibilities for each function
@@ -515,7 +521,7 @@ def backtrack(board, i):
             i+=1
             result = backtrack(board, i)
         else:
-            print('ran out of possibilities')
+            print('ran out of possibilities', board[var.x][var.y].value)
             return i
         #print('move', board[var.x][var.y].value, var.list[0])
         
@@ -840,7 +846,7 @@ def remove_triple(board, triple, dubxy, where):
     board[x1][y1].list = list(triple[2])
     board[x2][y2].list = list(triple[0])
     board[x3][y3].list = list(triple[1])
-    #print_board()
+    print_board()
         
 
     
@@ -1096,6 +1102,7 @@ def get_triple(arr, pair_list):
     else:
         double_list = pair_list
 
+   
     # if double list has a naked triple
     # possibility
     if len(double_list) >= 3:
@@ -1153,6 +1160,8 @@ def get_triple(arr, pair_list):
                 break
         # if all the pairs are unique and naked triple
         if len(triple) == 3 and len(pairs) == 3:
+            print('double list', double_list)
+            print_board()
             return triple
         else:
             return []
