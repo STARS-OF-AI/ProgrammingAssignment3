@@ -368,9 +368,13 @@ def inference_rules (board_objects):
 		
 	naked_singles(board_objects)
 	hidden_singles(board_objects)
-	
-	#naked_doubles(board_objects)
-	#hidden_pairs(board_objects)
+
+
+	#print('doing doubles')
+	#print_board()
+	naked_doubles(board_objects)
+	#print_board()
+	hidden_pairs(board_objects)
 
 	#naked_triple(board_objects)
 	#hidden_triples(board_objects)
@@ -460,11 +464,12 @@ def select_var(board, n):
         return 0
     elif n == 2:
         minVar = 10
+        minVarLocation = 0
         for x in range(9):
             for y in range(9):
-                if len(board[x][y].list) < minVar:
+                if len(board[x][y].list) < minVar and len(board[x][y].list) != 0:
                     minVar = len(board[x][y].list)
-                    minVarLocation = [x, y]
+                    minVarLocation = board[x][y]
 
         return minVarLocation
         #run MRV to get var
@@ -485,11 +490,12 @@ def backtrack(board, i):
 
     var = select_var(board, 1)
     #make a move on selected var
-    #print('bar', var)
+    #print('bar', var.x, var.y, var.value)
     try:
         if var == 0:
             print('out of vars')
-            return i
+            return result
+        
         #print('move', board[var.x][var.y].value, var.list[0])
         board[var.x][var.y].value = var.list[0]
         board[var.x][var.y].list = []
@@ -497,6 +503,10 @@ def backtrack(board, i):
         i+=1
         result = backtrack(board, i)
     except:
+        print('var', var)
+        if var == 0:
+            print('out of vars')
+            return i
         #print('move failed', var.value, board[var.x][var.y].list)
         if len(board[var.x][var.y].list) > 0:
             #print('in if')
@@ -511,7 +521,7 @@ def backtrack(board, i):
         
     if result:
         print('result true', result)
-        return i
+        return result
     print('false result')
     return False
  
@@ -580,94 +590,102 @@ def naked_singles(board_obj):
     #print("\n*********PRINTING BOX BOARD********")
     #print_board()
 
-def remove_double(board, double, dubxy):
+def remove_double(board, double, dubxy, where):
     x1 = dubxy[0][0]
     y1 = dubxy[0][1]
     x2 = dubxy[1][0]
     y2 = dubxy[1][1]
-    for i in range(9):
-        #print(board[x][i])
-        try:
-            board[x1][i].list.remove(double[0])
-        except ValueError:
-            pass
-        try:
-            board[x1][i].list.remove(double[1])
-        except ValueError:
-            pass
-        try:
-            board[i][y1].list.remove(double[0])
-        except ValueError:
-            pass
-        try:
-            board[i][y1].list.remove(double[1])
-        except ValueError:
-            pass
-        try:
-            board[x2][i].list.remove(double[0])
-        except ValueError:
-            pass
-        try:
-            board[x2][i].list.remove(double[1])
-        except ValueError:
-            pass
-        try:
-            board[i][y2].list.remove(double[0])
-        except ValueError:
-            pass
-        try:
-            board[i][y2].list.remove(double[1])
-        except ValueError:
-            pass
 
-    boxX = x1 - (x1%3)
-    boxY = y1 - (y1%3)
+    if where == 'row':
+        for i in range(9):
+            #print(board[x][i])
+            try:
+                board[x1][i].list.remove(double[0])
+            except ValueError:
+                pass
+            try:
+                board[x1][i].list.remove(double[1])
+            except ValueError:
+                pass
+            try:
+                board[x2][i].list.remove(double[0])
+            except ValueError:
+                pass
+            try:
+                board[x2][i].list.remove(double[1])
+            except ValueError:
+                pass
+            
+    elif where == 'col':
+        for i in range(9):
+            try:
+                board[i][y1].list.remove(double[0])
+            except ValueError:
+                pass
+            try:
+                board[i][y1].list.remove(double[1])
+            except ValueError:
+                pass
+            try:
+                board[i][y2].list.remove(double[0])
+            except ValueError:
+                pass
+            try:
+                board[i][y2].list.remove(double[1])
+            except ValueError:
+                pass
+    elif where == 'box':
+        boxX = x1 - (x1%3)
+        boxY = y1 - (y1%3)
 
-    for j in range(boxX, boxX+3):
-        for k in range(boxY, boxY+3):
-            try:
-                board[j][k].list.remove(double[0])
-            except ValueError:
-                pass
-            try:
-                board[j][k].list.remove(double[1])
-            except ValueError:
-                pass
-            try:
-                board[j][k].list.remove(double[0])
-            except ValueError:
-                pass
-            try:
-                board[j][k].list.remove(double[1])
-            except ValueError:
-                pass
+        for j in range(boxX, boxX+3):
+            for k in range(boxY, boxY+3):
+                try:
+                    board[j][k].list.remove(double[0])
+                except ValueError:
+                    pass
+                try:
+                    board[j][k].list.remove(double[1])
+                except ValueError:
+                    pass
+                try:
+                    board[j][k].list.remove(double[0])
+                except ValueError:
+                    pass
+                try:
+                    board[j][k].list.remove(double[1])
+                except ValueError:
+                    pass
 
-    boxX = x2 - (x2%3)
-    boxY = y2 - (y2%3)
+        boxX = x2 - (x2%3)
+        boxY = y2 - (y2%3)
 
-    for j in range(boxX, boxX+3):
-        for k in range(boxY, boxY+3):
-            try:
-                board[j][k].list.remove(double[0])
-            except ValueError:
-                pass
-            try:
-                board[j][k].list.remove(double[1])
-            except ValueError:
-                pass
-            try:
-                board[j][k].list.remove(double[0])
-            except ValueError:
-                pass
-            try:
-                board[j][k].list.remove(double[1])
-            except ValueError:
-                pass
+        for j in range(boxX, boxX+3):
+            for k in range(boxY, boxY+3):
+                try:
+                    board[j][k].list.remove(double[0])
+                except ValueError:
+                    pass
+                try:
+                    board[j][k].list.remove(double[1])
+                except ValueError:
+                    pass
+                try:
+                    board[j][k].list.remove(double[0])
+                except ValueError:
+                    pass
+                try:
+                    board[j][k].list.remove(double[1])
+                except ValueError:
+                    pass
 
     board[x1][y1].list = double
     board[x2][y2].list = double
+    print('double removed')
+    print_board()
 
-def remove_triple(board, triple, dubxy):
+def remove_triple(board, triple, dubxy, where):
+    print('removing triple', triple, dubxy, where)
     temp = set()
     backup = set()
     for z in range(3):
@@ -683,144 +701,145 @@ def remove_triple(board, triple, dubxy):
     y2 = dubxy[1][1]
     x3 = dubxy[2][0]
     y3 = dubxy[2][1]
-    #print('xy:', backup)
-    for i in range(9):
-        #print(board[x][i])
-        try:
-            board[x1][i].list.remove(double[0])               
-        except ValueError:
-            pass
-        try:
-            board[x1][i].list.remove(double[1])
-        except ValueError:
-            pass
-        try:
-            board[x1][i].list.remove(double[2])
-        except ValueError:
-            pass
-        try:
-            board[i][y1].list.remove(double[0])
-        except ValueError:
-            pass
-        try:
-            board[i][y1].list.remove(double[1])
-        except ValueError:
-            pass
-        try:
-            board[i][y1].list.remove(double[2])
-        except ValueError:
-            pass
-        try:
-            board[x2][i].list.remove(double[0])
-        except ValueError:
-            pass
-        try:
-            board[x2][i].list.remove(double[1])
-        except ValueError:
-            pass
-        try:
-            board[x2][i].list.remove(double[2])
-        except ValueError:
-            pass
-        try:
-            board[i][y2].list.remove(double[0])
-        except ValueError:
-            pass
-        try:
-            board[i][y2].list.remove(double[1])
-        except ValueError:
-            pass
-        try:
-            board[i][y2].list.remove(double[2])
-        except ValueError:
-            pass
-        try:
-            board[x3][i].list.remove(double[0])
-        except ValueError:
-            pass
-        try:
-            board[x3][i].list.remove(double[1])
-        except ValueError:
-            pass
-        try:
-            board[x3][i].list.remove(double[2])
-        except ValueError:
-            pass
-        try:
-            board[i][y3].list.remove(double[0])
-        except ValueError:
-            pass
-        try:
-            board[i][y3].list.remove(double[1])
-        except ValueError:
-            pass
-        try:
-            board[i][y3].list.remove(double[2])
-        except ValueError:
-            pass
 
-    
-    boxX = x1 - (x1%3)
-    boxY = y1 - (y1%3)
+    if where == 'row':
+        for i in range(9):
+            try:
+                board[x1][i].list.remove(double[0])               
+            except ValueError:
+                pass
+            try:
+                board[x1][i].list.remove(double[1])
+            except ValueError:
+                pass
+            try:
+                board[x1][i].list.remove(double[2])
+            except ValueError:
+                pass
+            try:
+                board[x2][i].list.remove(double[0])
+            except ValueError:
+                pass
+            try:
+                board[x2][i].list.remove(double[1])
+            except ValueError:
+                pass
+            try:
+                board[x2][i].list.remove(double[2])
+            except ValueError:
+                pass
+            try:
+                board[x3][i].list.remove(double[0])
+            except ValueError:
+                pass
+            try:
+                board[x3][i].list.remove(double[1])
+            except ValueError:
+                pass
+            try:
+                board[x3][i].list.remove(double[2])
+            except ValueError:
+                pass
+    elif where == 'col':
+        for i in range(9):
+            try:
+                board[i][y1].list.remove(double[0])
+            except ValueError:
+                pass
+            try:
+                board[i][y1].list.remove(double[1])
+            except ValueError:
+                pass
+            try:
+                board[i][y1].list.remove(double[2])
+            except ValueError:
+                pass
+            try:
+                board[i][y2].list.remove(double[0])
+            except ValueError:
+                pass
+            try:
+                board[i][y2].list.remove(double[1])
+            except ValueError:
+                pass
+            try:
+                board[i][y2].list.remove(double[2])
+            except ValueError:
+                pass
+            try:
+                board[i][y3].list.remove(double[0])
+            except ValueError:
+                pass
+            try:
+                board[i][y3].list.remove(double[1])
+            except ValueError:
+                pass
+            try:
+                board[i][y3].list.remove(double[2])
+            except ValueError:
+                pass
+    elif where == 'box':
+        boxX = x1 - (x1%3)
+        boxY = y1 - (y1%3)
 
-    for j in range(boxX, boxX+3):
-        for k in range(boxY, boxY+3):
-            try:
-                board[j][k].list.remove(double[0])
-            except ValueError:
-                pass
-            try:
-                board[j][k].list.remove(double[1])
-            except ValueError:
-                pass
-            try:
-                board[j][k].list.remove(double[2])
-            except ValueError:
-                pass
+        for j in range(boxX, boxX+3):
+            for k in range(boxY, boxY+3):
+                try:
+                    board[j][k].list.remove(double[0])
+                except ValueError:
+                    pass
+                try:
+                    board[j][k].list.remove(double[1])
+                except ValueError:
+                    pass
+                try:
+                    board[j][k].list.remove(double[2])
+                except ValueError:
+                    pass
 
 
-    boxX = x2 - (x2%3)
-    boxY = y2 - (y2%3)
+        boxX = x2 - (x2%3)
+        boxY = y2 - (y2%3)
 
-    for j in range(boxX, boxX+3):
-        for k in range(boxY, boxY+3):
-            try:
-                board[j][k].list.remove(double[0])
-            except ValueError:
-                pass
-            try:
-                board[j][k].list.remove(double[1])
-            except ValueError:
-                pass
-            try:
-                board[j][k].list.remove(double[2])
-            except ValueError:
-                pass
-    boxX = x3 - (x3%3)
-    boxY = y3 - (y3%3)
+        for j in range(boxX, boxX+3):
+            for k in range(boxY, boxY+3):
+                try:
+                    board[j][k].list.remove(double[0])
+                except ValueError:
+                    pass
+                try:
+                    board[j][k].list.remove(double[1])
+                except ValueError:
+                    pass
+                try:
+                    board[j][k].list.remove(double[2])
+                except ValueError:
+                    pass
+        boxX = x3 - (x3%3)
+        boxY = y3 - (y3%3)
 
-    for j in range(boxX, boxX+3):
-        for k in range(boxY, boxY+3):
-            try:
-                board[j][k].list.remove(double[0])
-            except ValueError:
-                pass
-            try:
-                board[j][k].list.remove(double[1])
-            except ValueError:
-                pass
-            try:
-                board[j][k].list.remove(double[2])
-            except ValueError:
-                pass
+        for j in range(boxX, boxX+3):
+            for k in range(boxY, boxY+3):
+                try:
+                    board[j][k].list.remove(double[0])
+                except ValueError:
+                    pass
+                try:
+                    board[j][k].list.remove(double[1])
+                except ValueError:
+                    pass
+                try:
+                    board[j][k].list.remove(double[2])
+                except ValueError:
+                    pass
+
+
 
     triple = list(backup)
-    #print('add back', triple[0], triple[1], triple[2], x1, x2, x3, backup)
-    
-    
-    board[x1][y1].list = list(triple[0])
-    board[x2][y2].list = list(triple[1])
-    board[x3][y3].list = list(triple[2])
+    print('add back', triple[0], triple[1], triple[2], backup)
+    board[x1][y1].list = list(triple[2])
+    board[x2][y2].list = list(triple[0])
+    board[x3][y3].list = list(triple[1])
     #print_board()
         
 
@@ -849,9 +868,10 @@ def naked_doubles(board_obj):
                     # neighboring cells
                     #remove_double(board_obj, double, x, y)
                     #calculate_poss(board_obj)
-            #print('dub',dubxy)
-            remove_double(board_obj, double, dubxy)
+            #print('dubrow',dubxy, double)
+            remove_double(board_obj, double, dubxy, 'row')
             double = []
+            return board_obj
 
     #print_board()
 
@@ -882,9 +902,11 @@ def naked_doubles(board_obj):
                     dubxy.append((x,y))
                     # then run the possibilities to remove it from
                     # neighboring cells
-            #print('dub',dubxy)
-            remove_double(board_obj, double, dubxy)
+            #print('dubcol',dubxy, double)
+            remove_double(board_obj, double, dubxy, 'col')
             double = []
+            return board_obj
+
 
     # find by box
     for x in [0, 3, 6]:
@@ -918,11 +940,13 @@ def naked_doubles(board_obj):
                             # print("ENTERING THE BOX CELL: {}, {} ".format(j, k))
                             # print(duplicate)
                             dubxy.append((j,k))
-                #print('dubBBBBBBBBBB: ',dubxy)
-                remove_double(board_obj, duplicate, dubxy)
+                #print('dubbox: ',dubxy, duplicate)
+                remove_double(board_obj, duplicate, dubxy, 'box')
                 #print("removed duplicate: ", duplicate)
-                print_board()
+                #print_board()
                 double = []
+                return board_obj
+
 
 
 # set up naked triple -- PART 1, only checks for
@@ -933,7 +957,7 @@ def naked_triple(board_obj):
         # func to check if size=2 of each item list in the row
         # return the naked triple
         triple = get_triple(board_obj[x], [])
-        #print("tripleeeee:", triple)
+       # print("triplerow:", triple)
         if len(triple) == 0:
             continue
         else:
@@ -951,8 +975,9 @@ def naked_triple(board_obj):
                     #remove_double(board_obj, triple, x, y)
                     #calculate_poss(board_obj)
             #print('trip row',tripxy)
-            remove_triple(board_obj, triple, tripxy)
+            remove_triple(board_obj, triple, tripxy, 'row')
             triple = []
+            return board_obj
 
     # find by column
     for y in range(9):
@@ -989,8 +1014,9 @@ def naked_triple(board_obj):
                     # then run the possibilities to remove it from
                     # neighboring cells
             #print('triple col: ',tripxy)
-            remove_triple(board_obj, triple, tripxy)
+            remove_triple(board_obj, triple, tripxy, 'col')
             triple = []
+            return board_obj
 
     # find by box
     for x in [0, 3, 6]:
@@ -1033,10 +1059,11 @@ def naked_triple(board_obj):
                             tripxy.append((j,k))
                             
                 #print('dubBBBtrtrtrBBBBBBB: ',triple, tripxy)
-                remove_triple(board_obj, triple, tripxy)
+                remove_triple(board_obj, triple, tripxy, 'box')
                 #print("removed triple: ", triple)
                 print_board()
-                double = []
+                triple = []
+                return board_obj
 
 
 # function to get naked double row/column
@@ -1095,6 +1122,7 @@ def get_triple(arr, pair_list):
             for j in range(i+1, length):
                 combo.add(double_list[j][0])
                 combo.add(double_list[j][1])
+                #print('combo', combo)
 
                 # if there is no overlap in possible
                 # numbers, then they are not a naked triple

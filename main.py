@@ -27,7 +27,7 @@ def get_score(solved, starting):
                 score += 1
     percent_correct = (score+num_start)/81
     print('Score: ', percent_correct)
-    return percent_correct
+    return percent_correct, score, num_start
 
 def main():
     f = open('sudoku-problems.txt', 'r')
@@ -74,7 +74,8 @@ def main():
         
         iter_depth = s.backtrack(s.board_objects, 0)
         s.print_board()
-        curr_score = (boards[i][0], get_score(s.board_objects, b_instance), iter_depth)
+        score_tup = get_score(s.board_objects, b_instance)
+        curr_score = (boards[i][0], score_tup[0], score_tup[1], score_tup[2], iter_depth)
         b_instance = []
         scores.append(curr_score)    
     
