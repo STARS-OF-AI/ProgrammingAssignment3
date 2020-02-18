@@ -330,67 +330,6 @@ def hidden_triples(board_objects):
                             #print ("Removing triples", key_nos, value_pos)
 
 
-
-def naked_triples_process(board_objects , row_column):
-    print ("in triples 2")
-    for i in range(0,9):
-	    if row_column == 'row':
-		    row = i
-		    empty_positions = [(row,k) for k in range(0,9)]
-	    else :
-		    column = i
-		    empty_positions = [(k,column) for k in range(0,9)]
-
-	    existing_values = [k for k in range(1,10) ]
-	    pos_triplets = {}
-	    nos_triplets = {}
-	    for j in range(0,9):
-		    if row_column == 'row':
-			    column = j
-		    else :
-			    row = j
-		    if board_objects[row][column].value != 0 :
-			    if board_objects[row][column].value in existing_values:        
-			            existing_values.remove(board_objects[row][column].value)
-			    empty_positions.remove((row,column))
-	    combinations = list(itertools.combinations(existing_values, 3))
-	    combinations_positions = list(itertools.combinations(empty_positions, 3))
-
-	    #for elem in combinations :
-	    #        nos_triplets[elem] = [0,[]] 
-
-	    for elem in combinations_positions :
-		    pos_triplets[elem] = [] 
-
-	    for key_pos, value_pos in pos_triplets.items():	
-		    for elem in key_pos :
-			    for number in board_objects[elem[0]][elem[1]].list:
-				    if number not in value_pos :
-					    pos_triplets[key_pos].append(number)
-
-	    #for key_pos , value_pos in pos_triples.items():
-	    #print (pos_triplets)
-	    triples_location = {}
-           	    
-	    for key_pos, value_pos in pos_triplets.items():	
-                    if len(value_pos) == 3 :
-                            triples_location[tuple(value_pos)] = list(key_pos)
-
-	    print_board()
-	    print (triples_location)
-	    for key, value in triples_location.items():
-		    triples_lists = []
-		    print (value)
-		    for item in value:
-			     triples_lists.append(board_objects[item[0]][item[1]].list)
-		    print (triples_lists)
-		    remove_triple_rajesh(board_objects, triples_lists,value, row_column)
-
-def naked_triples_rajesh(board_objects):
-	naked_triples_process(board_objects, 'row')
-
-
-
 def check_board_change(board_objects_before, board_objects):
 
 	#print_board()
@@ -417,8 +356,8 @@ def inference_rules (board_objects):
 	hidden_singles(board_objects)
 
 	if check_board_change(board_objects_before,board_objects):
-		print ("change occured")
-		print_board()
+		# print ("change occured")
+		# print_board()
 		inference_rules(board_objects)
 
 	#print('doing doubles')
@@ -426,9 +365,8 @@ def inference_rules (board_objects):
 	naked_doubles(board_objects)
 	#print_board()
 	hidden_pairs(board_objects)
-	naked_triples_rajesh(board_objects)
 
-#	naked_triple(board_objects)
+	naked_triple(board_objects)
 	hidden_triples(board_objects)
 
 	#print_board()
@@ -437,8 +375,8 @@ def inference_rules (board_objects):
 		return
 
 	if check_board_change(board_objects_before,board_objects):
-		print ("change occured")
-		print_board()
+		# print ("change occured")
+		# print_board()
 		inference_rules(board_objects)
 	
 		
@@ -539,15 +477,15 @@ def backtrack(board, i):
     grid = convert_to_numbers(board)
     #print('grid', grid)
     if check_sudoku(grid) or i == 1000:
-        print('board complete', i)
+        # print('board complete', i)
         return i
 
-    var = select_var(board, 1)
+    var = select_var(board, 2)
     #make a move on selected var
     #print('bar', var.x, var.y, var.value)
     try:
         if var == 0:
-            print('out of vars')
+            # print('out of vars')
             return i
         
         #print('move', board[var.x][var.y].value, var.list[0])
@@ -557,9 +495,9 @@ def backtrack(board, i):
         i+=1
         result = backtrack(board, i)
     except:
-        print('var', var)
+        # print('var', var)
         if var == 0:
-            print('out of vars')
+            # print('out of vars')
             return i
         #print('move failed', var.value, board[var.x][var.y].list)
         if len(board[var.x][var.y].list) > 0:
@@ -569,14 +507,14 @@ def backtrack(board, i):
             i+=1
             result = backtrack(board, i)
         else:
-            print('ran out of possibilities', board[var.x][var.y].value)
+            # print('ran out of possibilities', board[var.x][var.y].value)
             return i
         #print('move', board[var.x][var.y].value, var.list[0])
         
     if result:
-        print('result true', result)
+        # print('result true', result)
         return result
-    print('false result')
+    # print('false result')
     return False
  
 
@@ -735,11 +673,11 @@ def remove_double(board, double, dubxy, where):
 
     board[x1][y1].list = double
     board[x2][y2].list = double
-    print('double removed')
-    print_board()
+    # print('double removed')
+    # print_board()
 
 def remove_triple(board, triple, dubxy, where):
-    print('removing triple', triple, dubxy, where)
+    # print('removing triple', triple, dubxy, where)
     temp = set()
     backup = set()
     order = []
@@ -891,15 +829,15 @@ def remove_triple(board, triple, dubxy, where):
 
 
     triple = list(backup)
-    print('add back', triple, triple[1], triple[2], backup)
+    # print('add back', triple, triple[1], triple[2], backup)
     board[x1][y1].list = list(triple[2])
     board[x2][y2].list = list(triple[0])
     board[x3][y3].list = list(triple[1])
-    print_board()
+    # print_board()
         
 
-def remove_triple_rajesh(board, triple, dubxy, where):
-    print('removing triple', triple, dubxy, where)
+def remove_triple_2(board, triple, dubxy, where):
+    # print('removing triple', triple, dubxy, where)
     temp = set()
     backup = set()
     order = []
@@ -923,8 +861,8 @@ def remove_triple_rajesh(board, triple, dubxy, where):
                 order = [0, 0, 1]
             else:
                 order = [0,1,2]
-            print('order', order)
-        
+            # print('order', order)
+
     double = list(temp)
 
     x1 = dubxy[0][0]
@@ -938,7 +876,7 @@ def remove_triple_rajesh(board, triple, dubxy, where):
         for i in range(9):
             for j in range(len(double)):
                 try:
-                    board[x1][i].list.remove(double[j])               
+                    board[x1][i].list.remove(double[j])
                 except ValueError:
                     pass
                 try:
@@ -949,7 +887,7 @@ def remove_triple_rajesh(board, triple, dubxy, where):
                     board[x3][i].list.remove(double[j])
                 except ValueError:
                     pass
-              
+
     elif where == 'col':
         for i in range(9):
             for j in range(len(double)):
@@ -1002,11 +940,11 @@ def remove_triple_rajesh(board, triple, dubxy, where):
 
 
     triple = list(backup)
-    print('add back', triple, backup, order)    
+    # print('add back', triple, backup, order)
     board[x1][y1].list = list(triple[order[0]])
     board[x2][y2].list = list(triple[order[1]])
     board[x3][y3].list = list(triple[order[2]])
-    print_board()
+    # print_board()
        
 
 
@@ -1225,7 +1163,7 @@ def naked_triple(board_obj):
                 #print('dubBBBtrtrtrBBBBBBB: ',triple, tripxy)
                 remove_triple(board_obj, triple, tripxy, 'box')
                 #print("removed triple: ", triple)
-                print_board()
+                # print_board()
                 triple = []
                 return board_obj
 
@@ -1325,8 +1263,8 @@ def get_triple(arr, pair_list):
                 break
         # if all the pairs are unique and naked triple
         if len(triple) == 3 and len(pairs) == 3:
-            print('double list', double_list)
-            print_board()
+            # print('double list', double_list)
+            # print_board()
             return triple
         else:
             return []
@@ -1367,7 +1305,7 @@ def get_duplicate(seq, val):
 
 
 def naked_triples_process(board_objects, row_column):
-    print("in triples 2")
+    # print("in triples 2")
     for i in range(0, 9):
         if row_column == 'row':
             row = i
@@ -1411,19 +1349,17 @@ def naked_triples_process(board_objects, row_column):
             if len(value_pos) == 3:
                 triples_location[tuple(value_pos)] = list(key_pos)
 
-        print_board()
-        print(triples_location)
+        # print_board()
+        # print(triples_location)
         for key, value in triples_location.items():
             triples_lists = []
-            print(value)
+            # print(value)
             for item in value:
                 triples_lists.append(board_objects[item[0]][item[1]].list)
-            print(triples_lists)
-            remove_triple_rajesh(board_objects, triples_lists, value, row_column)
+            # print(triples_lists)
+            remove_triple_2(board_objects, triples_lists, value, row_column)
 
 
-def naked_triples_rajesh(board_objects):
-    naked_triples_process(board_objects, 'row')
 
 
 

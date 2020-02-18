@@ -29,7 +29,7 @@ def get_score(solved, starting):
             else:
                 score += 1
     percent_correct = (score+num_start)/81
-    print('Score: ', percent_correct)
+    # print('Score: ', percent_correct)
     return percent_correct, score, num_start
 
 def main():
@@ -48,7 +48,7 @@ def main():
             temp_board = []
         else:
             temp_board.append(i)
-    print(boards[0][1])
+    # print(boards[0][1])
     b_instance = []
     b_row = []
     scores = []
@@ -65,18 +65,18 @@ def main():
             
         #print('i', i, boards[i])
         if len(boards[i]) == 0:
-            print('Final Scores: ', scores) 
+            print('Final Scores: ', scores)
             s2 = DataFrame(scores)
-            print(s2)
+            # print(s2)
             s2.to_csv('scores.csv')
             return
-        print('Attempting to solve:', boards[i][0], b_instance)
+        # print('Attempting to solve:', boards[i][0], b_instance)
         s.create_board(b_instance)
         s.calculate_poss(s.board_objects)
         #s.print_board()
         
         iter_depth = s.backtrack(s.board_objects, 0)
-        s.print_board()
+        # s.print_board()
         score_tup = get_score(s.board_objects, b_instance)
         curr_score = (boards[i][0], score_tup[0], score_tup[1], score_tup[2], iter_depth)
         b_instance = []
