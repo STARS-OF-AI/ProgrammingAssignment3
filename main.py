@@ -1,10 +1,13 @@
 """
-Christopher Mendez, Rupika Dikkala & Rajesh
+Christopher Mendez, Rupika Dikkala & Rajesh Mangannavar
 Programming Assignment 3
 Sudoku
 CS 531 - AI
 February 17, 2020
 ***********************************
+This file contains the functions for getting
+the score and running the backtracking
+function with the inputted sudoku list.
 """
 
 import sudoku as s
@@ -78,29 +81,6 @@ def main():
         curr_score = (boards[i][0], score_tup[0], score_tup[1], score_tup[2], iter_depth)
         b_instance = []
         scores.append(curr_score)    
-    
-    
-                                      
-        
-
-    # initializing board
-    #s.create_board(board)
-    #s.calculate_poss(s.board_objects)
-    #print("\nPRINTING FRESH BOARD")
-    #s.print_board()
-    #s.backtrack(s.board_objects, 0)
-
-    # print("\nnaked single FUNCTION")
-    # s.naked_singles(s.board_objects)
-    # s.print_board()
-
-    # print("\nNAKED DOUBLES FUNCTION NOW")
-    # s.naked_doubles(s.board_objects)
-    # s.print_board()
-
-    #print("\nNAKED TRIPLE FUNCTION NOW")
-    #s.naked_triple(s.board_objects)
-    #s.print_board()
 
 
 if __name__ == "__main__":

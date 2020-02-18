@@ -1,10 +1,12 @@
 """
-Christopher Mendez, Rupika Dikkala & Rajesh **
+Christopher Mendez, Rupika Dikkala & Rajesh Mangannavar
 Programming Assignment 3
 Sudoku
 CS 531 - AI
 February 17, 2020
 ***********************************
+This file contains the logic for backtracking,
+and all the inference rules.
 """
 
 import cell as c
@@ -12,21 +14,6 @@ from prettytable import PrettyTable
 from collections import Counter
 import numpy as np
 import itertools
-
-# hardcoding the board for now (board feeder function goes here)
-
-
-
-# board = [
-# [0,0,2, 5,0,7, 3,1,0,],
-# [0,8,0, 0,0,0, 0,6,0,],
-# [0,0,0, 0,0,3, 2,0,8,],
-# [0,0,4, 3,0,2, 0,8,1,],
-# [8,0,1, 0,9,0, 7,0,3,],
-# [7,3,0, 8,0,4, 5,0,0,],
-# [4,0,9, 2,0,0, 0,0,0,],
-# [0,6,0, 0,0,0, 0,5,0,],
-# [0,1,3, 9,0,6, 8,0,0,]]
 
 
 # array of board objects

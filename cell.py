@@ -1,10 +1,12 @@
 """
-Christopher Mendez & Rupika Dikkala
+Christopher Mendez, Rupika Dikkala & Rajesh Mangannavar
 Programming Assignment 3
 Sudoku
 CS 531 - AI
 February 17, 2020
 ***********************************
+This file contains the cell class which is
+each square in the sudoku board.
 """
 
 
