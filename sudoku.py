@@ -494,7 +494,7 @@ def backtrack(board, i):
         print('board complete', i)
         return i
 
-    var = select_var(board, 2)
+    var = select_var(board, 1)
     #make a move on selected var
     #print('bar', var.x, var.y, var.value)
     try:
@@ -854,7 +854,7 @@ def remove_triple_rajesh(board, triple, dubxy, where):
     temp = set()
     backup = set()
     for z in range(3):
-        for z2 in range(len(triple[z]))
+        for z2 in range(len(triple[z])):
             temp.add(triple[z][z2])
             temp.add(triple[z][z2])
         backup.add(tuple(triple[z]))
