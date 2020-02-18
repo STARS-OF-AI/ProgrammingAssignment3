@@ -4,7 +4,7 @@ This project was developed by students taking CS 531 (AI) at Oregon State Univer
 
 ## Development 
 
-Developed by: Christopher Mendez & Rupika Dikkala
+Developed by: Christopher Mendez. Rupika Dikkala, Rajesh Mangannavar
 
 ## Instructions
 
